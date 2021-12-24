@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import xyz.jpenilla.squaremap.addon.signs.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.signs.SignsPlugin;
+import xyz.jpenilla.squaremap.addon.signs.config.SignsWorldConfig;
 import xyz.jpenilla.squaremap.addon.signs.data.SignLayerProvider;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -36,8 +37,8 @@ public final class SquaremapHook {
         if (mapWorld == null) {
             return null;
         }
-        WorldConfig worldConfig = WorldConfig.get(world);
-        if (!worldConfig.ENABLED) {
+        SignsWorldConfig worldConfig = SignsPlugin.getInstance().config().worldConfig(mapWorld.identifier());
+        if (!worldConfig.enabled) {
             return null;
         }
         provider = new SignLayerProvider(worldConfig);

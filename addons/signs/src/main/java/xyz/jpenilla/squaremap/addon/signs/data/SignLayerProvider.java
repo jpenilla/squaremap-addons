@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import xyz.jpenilla.squaremap.addon.signs.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.signs.config.SignsWorldConfig;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.LayerProvider;
 import xyz.jpenilla.squaremap.api.marker.Icon;
@@ -15,35 +15,35 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
 public final class SignLayerProvider implements LayerProvider {
     private final Map<Position, Data> data = new ConcurrentHashMap<>();
-    private final WorldConfig worldConfig;
+    private final SignsWorldConfig worldConfig;
 
-    public SignLayerProvider(WorldConfig worldConfig) {
+    public SignLayerProvider(SignsWorldConfig worldConfig) {
         this.worldConfig = worldConfig;
     }
 
     @Override
     public @NonNull String getLabel() {
-        return this.worldConfig.LAYER_LABEL;
+        return this.worldConfig.layerLabel;
     }
 
     @Override
     public boolean showControls() {
-        return this.worldConfig.LAYER_CONTROLS;
+        return this.worldConfig.layerControls;
     }
 
     @Override
     public boolean defaultHidden() {
-        return this.worldConfig.LAYER_CONTROLS_HIDDEN;
+        return this.worldConfig.layerControlsHidden;
     }
 
     @Override
     public int layerPriority() {
-        return this.worldConfig.LAYER_PRIORITY;
+        return this.worldConfig.layerPriority;
     }
 
     @Override
     public int zIndex() {
-        return this.worldConfig.LAYER_ZINDEX;
+        return this.worldConfig.layerZindex;
     }
 
     @Override
@@ -66,9 +66,9 @@ public final class SignLayerProvider implements LayerProvider {
     }
 
     public void add(Position position, Key key, String[] lines) {
-        Icon icon = Marker.icon(position.point(), key, worldConfig.ICON_SIZE);
+        Icon icon = Marker.icon(position.point(), key, worldConfig.iconSize);
         icon.markerOptions(MarkerOptions.builder()
-                .hoverTooltip(worldConfig.TOOLTIP
+                .hoverTooltip(worldConfig.tooltip
                         .replace("{line1}", lines[0])
                         .replace("{line2}", lines[1])
                         .replace("{line3}", lines[2])

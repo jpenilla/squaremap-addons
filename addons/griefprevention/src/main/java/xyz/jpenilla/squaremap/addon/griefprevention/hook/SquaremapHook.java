@@ -3,8 +3,7 @@ package xyz.jpenilla.squaremap.addon.griefprevention.hook;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
-import xyz.jpenilla.squaremap.addon.griefprevention.configuration.Config;
+import xyz.jpenilla.squaremap.addon.griefprevention.SquaremapGriefPrevention;
 import xyz.jpenilla.squaremap.addon.griefprevention.task.SquaremapTask;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -18,7 +17,7 @@ public final class SquaremapHook {
 
     private final Map<WorldIdentifier, SquaremapTask> tasks = new HashMap<>();
 
-    public SquaremapHook(Plugin plugin) {
+    public SquaremapHook(SquaremapGriefPrevention plugin) {
         for (final MapWorld world : SquaremapProvider.get().mapWorlds()) {
             final World bukkitWorld = BukkitAdapter.bukkitWorld(world);
             if (!GPHook.isWorldEnabled(bukkitWorld.getUID())) {
@@ -26,13 +25,13 @@ public final class SquaremapHook {
             }
 
             SimpleLayerProvider provider = SimpleLayerProvider
-                .builder(Config.CONTROL_LABEL)
-                .showControls(Config.CONTROL_SHOW)
-                .defaultHidden(Config.CONTROL_HIDE)
+                .builder(plugin.config().controlLabel)
+                .showControls(plugin.config().controlShow)
+                .defaultHidden(plugin.config().controlHide)
                 .build();
             world.layerRegistry().register(GP_LAYER_KEY, provider);
-            SquaremapTask task = new SquaremapTask(world, provider);
-            task.runTaskTimerAsynchronously(plugin, 0, 20L * Config.UPDATE_INTERVAL);
+            SquaremapTask task = new SquaremapTask(plugin, world, provider);
+            task.runTaskTimerAsynchronously(plugin, 0, 20L * plugin.config().updateInterval);
             this.tasks.put(world.identifier(), task);
         }
     }

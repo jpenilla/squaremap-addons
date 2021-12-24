@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.deathspot.DeathSpots;
-import xyz.jpenilla.squaremap.addon.deathspot.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotWorldConfig;
 import xyz.jpenilla.squaremap.addon.deathspot.hook.SquaremapHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -18,7 +18,7 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 public final class SquaremapTask extends BukkitRunnable {
     private final DeathSpots plugin;
     private final SimpleLayerProvider provider;
-    private final WorldConfig worldConfig;
+    private final DeathSpotWorldConfig worldConfig;
     private final MapWorld world;
 
     private boolean stop;
@@ -27,7 +27,7 @@ public final class SquaremapTask extends BukkitRunnable {
         this.plugin = plugin;
         this.world = world;
         this.provider = provider;
-        this.worldConfig = WorldConfig.get(world.identifier());
+        this.worldConfig = plugin.config().worldConfig(world.identifier());
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class SquaremapTask extends BukkitRunnable {
 
         icon.markerOptions(
             MarkerOptions.builder()
-                .hoverTooltip(worldConfig.TOOLTIP.replace("{name}", name))
+                .hoverTooltip(worldConfig.tooltip.replace("{name}", name))
         );
 
         final String markerid = "deathspots_player_" + uuid;

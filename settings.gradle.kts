@@ -19,7 +19,7 @@ dependencyResolutionManagement {
                 includeGroup("net.essentialsx")
             }
         }
-        maven("https://jitpack.io") {
+        maven("https://jitpack.io/") {
             mavenContent {
                 includeGroupByRegex("com\\.github\\..*")
             }
@@ -29,6 +29,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "squaremap-addons"
+
+include(":common")
 
 includeAddon("signs")
 includeAddon("mobs")

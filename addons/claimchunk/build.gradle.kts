@@ -1,7 +1,7 @@
 description = "ClaimChunk addon for squaremap"
 
 dependencies {
-    compileAndTest("com.github.cjburkey01:ClaimChunk:0.0.22") {
+    compileOnly("com.github.cjburkey01:ClaimChunk:0.0.22") {
         isTransitive = false
     }
 }

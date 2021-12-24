@@ -6,14 +6,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import xyz.jpenilla.squaremap.addon.essentialsx.configuration.Config;
+import xyz.jpenilla.squaremap.addon.essentialsx.SquaremapEssentials;
 import xyz.jpenilla.squaremap.addon.essentialsx.hook.EssentialsHook;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 
-public final class EssentialsListener implements Listener {
+public record EssentialsListener(SquaremapEssentials plugin) implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVanishStatusChange(VanishStatusChangeEvent event) {
-        if (!Config.HIDE_VANISHED) {
+        if (!this.plugin.config().hideVanished) {
             return;
         }
         final Player player = event.getAffected().getBase();
@@ -23,7 +23,7 @@ public final class EssentialsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!Config.HIDE_VANISHED) {
+        if (!this.plugin.config().hideVanished) {
             return;
         }
         final Player player = event.getPlayer();

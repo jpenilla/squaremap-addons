@@ -1,15 +1,16 @@
 package xyz.jpenilla.squaremap.addon.worldguard;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.jpenilla.squaremap.addon.worldguard.configuration.Config;
+import xyz.jpenilla.squaremap.addon.worldguard.config.WGConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.SquaremapHook;
 
 public final class SquaremapWorldGuard extends JavaPlugin {
     private SquaremapHook squaremapHook;
+    private WGConfig config;
 
     @Override
     public void onEnable() {
-        Config.reload(this);
+        this.config = new WGConfig(this);
 
         this.squaremapHook = new SquaremapHook(this);
     }
@@ -19,5 +20,9 @@ public final class SquaremapWorldGuard extends JavaPlugin {
         if (this.squaremapHook != null) {
             this.squaremapHook.disable();
         }
+    }
+
+    public WGConfig config() {
+        return this.config;
     }
 }

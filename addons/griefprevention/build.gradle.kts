@@ -1,5 +1,5 @@
 dependencies {
-    compileAndTest("com.github.TechFortress:GriefPrevention:16.17.1")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.17.1")
 }
 
 bukkit {

@@ -1,20 +1,33 @@
 plugins {
     id("base-conventions")
     id("net.minecrell.plugin-yml.bukkit")
+    id("com.github.johnrengelman.shadow")
 }
 
 dependencies {
-    "compileAndTest"("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
-    "compileAndTest"("xyz.jpenilla:squaremap-api:1.1.0-SNAPSHOT")
-}
-
-val jar = tasks.named<AbstractArchiveTask>("jar").flatMap { it.archiveFile }
-val copyJar = tasks.register("copyJar", CopyFile::class) {
-    fileToCopy.set(jar)
-    destination.set(jar.flatMap { rootProject.layout.buildDirectory.file("libs/${it.asFile.name}") })
+    implementation(project(":common"))
 }
 
 tasks {
+    val copyJar = register("copyJar", CopyFile::class) {
+        fileToCopy.set(shadowJar.flatMap { it.archiveFile })
+
+        val projectVersion = project.version
+        inputs.property("projectVer", projectVersion)
+        destination.set(
+            base.archivesName.flatMap {
+                rootProject.layout.buildDirectory.file("libs/$it-$projectVersion.jar")
+            }
+        )
+    }
+
+    shadowJar {
+        relocate(
+            "xyz.jpenilla.squaremap.addon.common",
+            "xyz.jpenilla.squaremap.addon.${project.name.substring("squaremap-".length)}.shaded.common"
+        )
+    }
+
     assemble {
         dependsOn(copyJar)
     }

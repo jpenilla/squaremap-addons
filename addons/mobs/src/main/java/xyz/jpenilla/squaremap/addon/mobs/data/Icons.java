@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.bukkit.entity.EntityType;
 import xyz.jpenilla.squaremap.addon.mobs.SquaremapMobs;
-import xyz.jpenilla.squaremap.addon.mobs.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.mobs.config.MobsWorldConfig;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 
@@ -100,7 +100,7 @@ public final class Icons {
             final BufferedImage image = ImageIO.read(file);
             SquaremapProvider.get().iconRegistry().register(key, image);
 
-            final EntityType type = WorldConfig.parseEntityType(name);
+            final EntityType type = MobsWorldConfig.parseEntityType(name);
             if (type == null) {
                 throw new RuntimeException("unknown entity type: " + name);
             }

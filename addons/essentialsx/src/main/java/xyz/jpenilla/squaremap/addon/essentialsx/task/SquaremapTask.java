@@ -6,7 +6,7 @@ import net.ess3.api.InvalidWorldException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.jpenilla.squaremap.addon.essentialsx.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.essentialsx.config.EssXWorldConfig;
 import xyz.jpenilla.squaremap.addon.essentialsx.hook.EssentialsHook;
 import xyz.jpenilla.squaremap.addon.essentialsx.hook.SquaremapHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -21,11 +21,11 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 public final class SquaremapTask extends BukkitRunnable {
     private final MapWorld world;
     private final SimpleLayerProvider provider;
-    private final WorldConfig worldConfig;
+    private final EssXWorldConfig worldConfig;
 
     private boolean stop;
 
-    public SquaremapTask(MapWorld world, WorldConfig worldConfig, SimpleLayerProvider provider) {
+    public SquaremapTask(MapWorld world, EssXWorldConfig worldConfig, SimpleLayerProvider provider) {
         this.world = world;
         this.provider = provider;
         this.worldConfig = worldConfig;
@@ -55,13 +55,13 @@ public final class SquaremapTask extends BukkitRunnable {
     }
 
     private void handle(String warpName, Location loc) {
-        Icon icon = Marker.icon(BukkitAdapter.point(loc), SquaremapHook.WARP_ICON_KEY, this.worldConfig.ICON_SIZE);
+        Icon icon = Marker.icon(BukkitAdapter.point(loc), SquaremapHook.WARP_ICON_KEY, this.worldConfig.iconSize);
 
-        icon.anchor(Point.of(this.worldConfig.ICON_ANCHOR_X, this.worldConfig.ICON_ANCHOR_Z));
+        icon.anchor(Point.of(this.worldConfig.iconAnchorX, this.worldConfig.iconAnchorZ));
 
         icon.markerOptions(
             MarkerOptions.builder()
-                .hoverTooltip(this.worldConfig.WARPS_TOOLTIP.replace("{warp}", warpName))
+                .hoverTooltip(this.worldConfig.warpsTooltip.replace("{warp}", warpName))
         );
 
         String markerid = "essentials_warp_" + warpName.hashCode();

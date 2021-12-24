@@ -2,8 +2,7 @@ package xyz.jpenilla.squaremap.addon.worldguard.hook;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.plugin.Plugin;
-import xyz.jpenilla.squaremap.addon.worldguard.configuration.Config;
+import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
 import xyz.jpenilla.squaremap.addon.worldguard.task.SquaremapTask;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.SimpleLayerProvider;
@@ -17,16 +16,16 @@ public final class SquaremapHook {
 
     private final Map<WorldIdentifier, SquaremapTask> provider = new HashMap<>();
 
-    public SquaremapHook(Plugin plugin) {
+    public SquaremapHook(SquaremapWorldGuard plugin) {
         SquaremapProvider.get().mapWorlds().forEach(world -> {
             SimpleLayerProvider provider = SimpleLayerProvider
-                .builder(Config.CONTROL_LABEL)
-                .showControls(Config.CONTROL_SHOW)
-                .defaultHidden(Config.CONTROL_HIDE)
+                .builder(plugin.config().controlLabel)
+                .showControls(plugin.config().controlShow)
+                .defaultHidden(plugin.config().controlHide)
                 .build();
             world.layerRegistry().register(WORLDGUARD_LAYER_KEY, provider);
-            SquaremapTask task = new SquaremapTask(world, provider);
-            task.runTaskTimerAsynchronously(plugin, 0, 20L * Config.UPDATE_INTERVAL);
+            SquaremapTask task = new SquaremapTask(plugin, world, provider);
+            task.runTaskTimerAsynchronously(plugin, 0, 20L * plugin.config().updateInterval);
             this.provider.put(world.identifier(), task);
         });
     }

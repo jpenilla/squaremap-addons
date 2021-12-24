@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import xyz.jpenilla.squaremap.addon.deathspot.DeathSpots;
-import xyz.jpenilla.squaremap.addon.deathspot.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotWorldConfig;
 import xyz.jpenilla.squaremap.addon.deathspot.task.SquaremapTask;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.MapWorld;
@@ -33,19 +33,19 @@ public final class SquaremapHook {
         }
 
         for (final MapWorld world : SquaremapProvider.get().mapWorlds()) {
-            final WorldConfig worldConfig = WorldConfig.get(world.identifier());
-            if (!worldConfig.ENABLED) {
+            final DeathSpotWorldConfig worldConfig = plugin.config().worldConfig(world.identifier());
+            if (!worldConfig.enabled) {
                 continue;
             }
 
             final SimpleLayerProvider provider = SimpleLayerProvider.builder("DeathSpots")
-                .showControls(worldConfig.ENABLE_CONTROLS)
-                .defaultHidden(worldConfig.CONTROLS_HIDDEN_BY_DEFAULT)
+                .showControls(worldConfig.enableControls)
+                .defaultHidden(worldConfig.controlsHiddenByDefault)
                 .build();
             world.layerRegistry().register(DEATH_SPOTS_LAYER_KEY, provider);
 
             final SquaremapTask task = new SquaremapTask(plugin, world, provider);
-            task.runTaskTimerAsynchronously(plugin, 0, 20L * worldConfig.UPDATE_INTERVAL);
+            task.runTaskTimerAsynchronously(plugin, 0, 20L * worldConfig.updateInterval);
 
             this.tasks.put(world.identifier(), task);
         }

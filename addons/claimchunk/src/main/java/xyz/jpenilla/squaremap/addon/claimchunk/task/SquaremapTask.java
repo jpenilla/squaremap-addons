@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.jpenilla.squaremap.addon.claimchunk.configuration.Config;
+import xyz.jpenilla.squaremap.addon.claimchunk.SquaremapClaimChunk;
 import xyz.jpenilla.squaremap.addon.claimchunk.data.Claim;
 import xyz.jpenilla.squaremap.addon.claimchunk.data.Group;
 import xyz.jpenilla.squaremap.addon.claimchunk.hook.ClaimChunkHook;
@@ -31,10 +31,16 @@ import static xyz.jpenilla.squaremap.api.Key.key;
 public final class SquaremapTask extends BukkitRunnable {
     private final World bukkitWorld;
     private final SimpleLayerProvider provider;
+    private final SquaremapClaimChunk plugin;
 
     private boolean stop;
 
-    public SquaremapTask(final MapWorld world, final SimpleLayerProvider provider) {
+    public SquaremapTask(
+        final SquaremapClaimChunk plugin,
+        final MapWorld world,
+        final SimpleLayerProvider provider
+    ) {
+        this.plugin = plugin;
         this.bukkitWorld = BukkitAdapter.bukkitWorld(world);
         this.provider = provider;
     }
@@ -58,7 +64,7 @@ public final class SquaremapTask extends BukkitRunnable {
             .toList();
 
         // show simple markers (marker per chunk)
-        if (Config.SHOW_CHUNKS) {
+        if (this.plugin.config().showChunks) {
             dataChunks.forEach(this::drawChunk);
             return;
         }
@@ -151,13 +157,13 @@ public final class SquaremapTask extends BukkitRunnable {
         final OfflinePlayer player = Bukkit.getOfflinePlayer(owner);
         final String ownerName = player.getName() == null ? "unknown" : player.getName();
         return MarkerOptions.builder()
-            .strokeColor(Config.STROKE_COLOR)
-            .strokeWeight(Config.STROKE_WEIGHT)
-            .strokeOpacity(Config.STROKE_OPACITY)
-            .fillColor(Config.FILL_COLOR)
-            .fillOpacity(Config.FILL_OPACITY)
+            .strokeColor(this.plugin.config().strokeColor)
+            .strokeWeight(this.plugin.config().strokeWeight)
+            .strokeOpacity(this.plugin.config().strokeOpacity)
+            .fillColor(this.plugin.config().fillColor)
+            .fillOpacity(this.plugin.config().fillOpacity)
             .clickTooltip(
-                Config.CLAIM_TOOLTIP
+                this.plugin.config().claimTooltip
                     .replace("{world}", this.bukkitWorld.getName())
                     .replace("{owner}", ownerName)
             );
@@ -169,4 +175,3 @@ public final class SquaremapTask extends BukkitRunnable {
         this.provider.clearMarkers();
     }
 }
-

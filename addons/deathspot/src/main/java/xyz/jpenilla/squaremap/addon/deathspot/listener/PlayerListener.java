@@ -9,7 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.deathspot.DeathSpots;
-import xyz.jpenilla.squaremap.addon.deathspot.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotWorldConfig;
+import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Pair;
 
 public record PlayerListener(DeathSpots plugin) implements Listener {
@@ -19,8 +20,8 @@ public record PlayerListener(DeathSpots plugin) implements Listener {
         final UUID uuid = player.getUniqueId();
         final Location location = player.getLocation();
 
-        final WorldConfig worldConfig = WorldConfig.get(location.getWorld());
-        if (!worldConfig.ENABLED) {
+        final DeathSpotWorldConfig worldConfig = this.plugin.config().worldConfig(BukkitAdapter.worldIdentifier(location.getWorld()));
+        if (!worldConfig.enabled) {
             return;
         }
 
@@ -31,6 +32,6 @@ public record PlayerListener(DeathSpots plugin) implements Listener {
             public void run() {
                 PlayerListener.this.plugin.getDeathSpots().remove(uuid);
             }
-        }.runTaskLater(this.plugin, 20L * worldConfig.REMOVE_MARKER_AFTER);
+        }.runTaskLater(this.plugin, 20L * worldConfig.removeMarkerAfter);
     }
 }

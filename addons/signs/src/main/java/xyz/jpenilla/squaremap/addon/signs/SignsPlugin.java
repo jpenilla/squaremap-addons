@@ -1,7 +1,7 @@
 package xyz.jpenilla.squaremap.addon.signs;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.jpenilla.squaremap.addon.signs.configuration.Config;
+import xyz.jpenilla.squaremap.addon.signs.config.SignsConfig;
 import xyz.jpenilla.squaremap.addon.signs.data.Icons;
 import xyz.jpenilla.squaremap.addon.signs.data.SignManager;
 import xyz.jpenilla.squaremap.addon.signs.hook.SquaremapHook;
@@ -13,6 +13,7 @@ public final class SignsPlugin extends JavaPlugin {
     private static SignsPlugin instance;
     private SquaremapHook squaremapHook;
     private SignManager signManager;
+    private SignsConfig config;
 
     public SignsPlugin() {
         instance = this;
@@ -20,7 +21,8 @@ public final class SignsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Config.reload();
+        this.config = new SignsConfig(this);
+        this.config.reload();
 
         @SuppressWarnings("unused")
         Key staticInit = Icons.OAK;
@@ -58,5 +60,9 @@ public final class SignsPlugin extends JavaPlugin {
 
     public SignManager getSignManager() {
         return this.signManager;
+    }
+
+    public SignsConfig config() {
+        return this.config;
     }
 }

@@ -9,10 +9,14 @@ allprojects {
 }
 
 subprojects {
+    if (name == "common") {
+        return@subprojects
+    }
+
     apply(plugin = "squaremap-addon")
 
     rootProject.tasks.runServer {
-        pluginJars(tasks.named<AbstractArchiveTask>("jar").flatMap { it.archiveFile })
+        pluginJars(tasks.named<AbstractArchiveTask>("shadowJar").flatMap { it.archiveFile })
     }
 }
 

@@ -6,13 +6,14 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.jpenilla.squaremap.addon.deathspot.configuration.Config;
+import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotConfig;
 import xyz.jpenilla.squaremap.addon.deathspot.hook.SquaremapHook;
 import xyz.jpenilla.squaremap.addon.deathspot.listener.PlayerListener;
 import xyz.jpenilla.squaremap.api.Pair;
 
 public final class DeathSpots extends JavaPlugin {
     private static DeathSpots instance;
+    private DeathSpotConfig config;
     private final Map<UUID, Pair<String, Location>> deathSpots = new HashMap<>();
     private SquaremapHook squaremapHook;
 
@@ -22,7 +23,8 @@ public final class DeathSpots extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Config.reload();
+        this.config = new DeathSpotConfig(this);
+        this.config.reload();
 
         if (!new File(this.getDataFolder(), "icon.png").exists()) {
             this.saveResource("icon.png", false);
@@ -47,5 +49,9 @@ public final class DeathSpots extends JavaPlugin {
 
     public Map<UUID, Pair<String, Location>> getDeathSpots() {
         return this.deathSpots;
+    }
+
+    public DeathSpotConfig config() {
+        return this.config;
     }
 }

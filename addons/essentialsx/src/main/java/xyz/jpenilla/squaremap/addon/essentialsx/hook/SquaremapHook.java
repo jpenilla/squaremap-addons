@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import xyz.jpenilla.squaremap.addon.essentialsx.SquaremapEssentials;
-import xyz.jpenilla.squaremap.addon.essentialsx.configuration.Config;
-import xyz.jpenilla.squaremap.addon.essentialsx.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.essentialsx.config.EssXWorldConfig;
 import xyz.jpenilla.squaremap.addon.essentialsx.task.SquaremapTask;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.MapWorld;
@@ -37,18 +36,18 @@ public final class SquaremapHook {
         }
 
         for (final MapWorld mapWorld : SquaremapProvider.get().mapWorlds()) {
-            WorldConfig worldConfig = WorldConfig.get(mapWorld);
-            if (!worldConfig.ENABLED) {
+            EssXWorldConfig worldConfig = this.plugin.config().worldConfig(mapWorld.identifier());
+            if (!worldConfig.enabled) {
                 continue;
             }
 
-            SimpleLayerProvider provider = SimpleLayerProvider.builder(worldConfig.WARPS_LABEL)
-                .showControls(worldConfig.WARPS_SHOW_CONTROLS)
-                .defaultHidden(worldConfig.WARPS_CONTROLS_HIDDEN)
+            SimpleLayerProvider provider = SimpleLayerProvider.builder(worldConfig.warpsLabel)
+                .showControls(worldConfig.warpsShowControls)
+                .defaultHidden(worldConfig.warpsControlsHidden)
                 .build();
             mapWorld.layerRegistry().register(Key.of("essentials_warps"), provider);
             SquaremapTask task = new SquaremapTask(mapWorld, worldConfig, provider);
-            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * Config.UPDATE_INTERVAL);
+            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * this.plugin.config().updateInterval);
             this.tasks.put(mapWorld.identifier(), task);
         }
     }

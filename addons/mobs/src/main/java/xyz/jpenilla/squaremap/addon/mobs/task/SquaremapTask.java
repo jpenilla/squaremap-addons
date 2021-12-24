@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.jpenilla.squaremap.addon.mobs.configuration.WorldConfig;
+import xyz.jpenilla.squaremap.addon.mobs.config.MobsWorldConfig;
 import xyz.jpenilla.squaremap.addon.mobs.data.Icons;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -20,11 +20,11 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 public final class SquaremapTask extends BukkitRunnable {
     private final MapWorld world;
     private final SimpleLayerProvider provider;
-    private final WorldConfig worldConfig;
+    private final MobsWorldConfig worldConfig;
 
     private boolean stop;
 
-    public SquaremapTask(MapWorld world, WorldConfig worldConfig, SimpleLayerProvider provider) {
+    public SquaremapTask(MapWorld world, MobsWorldConfig worldConfig, SimpleLayerProvider provider) {
         this.world = world;
         this.provider = provider;
         this.worldConfig = worldConfig;
@@ -40,14 +40,14 @@ public final class SquaremapTask extends BukkitRunnable {
 
         for (final Mob mob : BukkitAdapter.bukkitWorld(this.world).getEntitiesByClass(Mob.class)) {
             final EntityType type = mob.getType();
-            if (!this.worldConfig.ALLOWED_TYPES.contains(type)) {
+            if (!this.worldConfig.allowedTypes.contains(type)) {
                 continue;
             }
             final Location loc = mob.getLocation();
-            if (loc.getY() < this.worldConfig.MINIMUM_Y) {
+            if (loc.getY() < this.worldConfig.minimumY) {
                 continue;
             }
-            if (this.worldConfig.SURFACE_ONLY && aboveSurface(loc)) {
+            if (this.worldConfig.surfaceOnly && aboveSurface(loc)) {
                 continue;
             }
             this.handleMob(type, mob.getEntityId(), loc);
@@ -62,7 +62,7 @@ public final class SquaremapTask extends BukkitRunnable {
         final Icon icon = Marker.icon(
             BukkitAdapter.point(loc),
             Icons.getIcon(type),
-            this.worldConfig.ICON_SIZE
+            this.worldConfig.iconSize
         );
 
         final String name = PaperComponents.plainTextSerializer().serialize(Component.translatable(type.translationKey()));
@@ -70,7 +70,7 @@ public final class SquaremapTask extends BukkitRunnable {
         icon.markerOptions(
             MarkerOptions.builder()
                 .hoverTooltip(
-                    this.worldConfig.ICON_TOOLTIP
+                    this.worldConfig.iconTooltip
                         .replace("{id}", Integer.toString(id))
                         .replace("{key}", type.getKey().asString())
                         .replace("{name}", name)
