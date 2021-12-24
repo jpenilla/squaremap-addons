@@ -1,18 +1,22 @@
 package xyz.jpenilla.squaremap.addon.common.config;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import xyz.jpenilla.squaremap.api.MapWorld;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
@@ -22,16 +26,13 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
     private static final String CONFIG_FILE_NAME = "config.yml";
 
     private final Class<C> configClass;
-    private final File configFile;
+    private final Path configFile;
     private final @Nullable Class<W> worldConfigClass;
     private final @Nullable Map<WorldIdentifier, W> worldConfigs;
-    YamlConfiguration config;
+    ConfigurationNode config;
     //static int VERSION;
 
-    protected Config(
-        final Class<C> configClass,
-        final Plugin plugin
-    ) {
+    protected Config(final Class<C> configClass, final Plugin plugin) {
         this(configClass, null, plugin);
     }
 
@@ -43,18 +44,21 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         this.configClass = configClass;
         this.worldConfigClass = worldConfigClass;
         this.worldConfigs = worldConfigClass == null ? null : new ConcurrentHashMap<>();
-        this.configFile = new File(plugin.getDataFolder(), CONFIG_FILE_NAME);
+        this.configFile = plugin.getDataFolder().toPath().resolve(CONFIG_FILE_NAME);
     }
 
     public final void reload() {
-        this.config = new YamlConfiguration();
+        final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+            .path(this.configFile)
+            .nodeStyle(NodeStyle.BLOCK)
+            .build();
+
         try {
-            this.config.load(this.configFile);
-        } catch (IOException ignore) {
-        } catch (InvalidConfigurationException ex) {
-            throw new RuntimeException("Could not load config.yml, please correct your syntax errors", ex);
+            this.config = loader.load();
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not load config.yml, exception occurred (are there syntax errors?)", ex);
         }
-        this.config.options().copyDefaults(true);
+        //this.config.options().copyDefaults(true);
 
         //VERSION = getInt("config-version", 1);
         //set("config-version", 1);
@@ -62,11 +66,27 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         this.readConfig(this.configClass, this);
 
         if (this.worldConfigs != null) {
+            final Set<WorldIdentifier> removed = new HashSet<>(this.worldConfigs.keySet());
             this.worldConfigs.clear();
+
+            if (removed.isEmpty()) {
+                this.createWorldConfig("fake-world-999999999999999"); // load default section (dum but works)
+            } else {
+                // re-load previously loaded
+                for (final WorldIdentifier identifier : removed) {
+                    this.worldConfig(identifier);
+                }
+            }
+        }
+
+        try {
+            loader.save(this.config);
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not save " + this.configFile, ex);
         }
     }
 
-    public W worldConfig(final WorldIdentifier identifier) {
+    public final W worldConfig(final WorldIdentifier identifier) {
         if (this.worldConfigs == null || this.worldConfigClass == null) {
             throw new IllegalArgumentException("No world config");
         }
@@ -76,16 +96,24 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
                 .map(MapWorld::name) // use names for now
                 .orElseThrow();
 
-            try {
-                final Constructor<W> ctr = this.worldConfigClass.getDeclaredConstructor(Config.class, String.class);
-                ctr.setAccessible(true);
-                final W worldConfig = ctr.newInstance(this, name);
-                this.readConfig(this.worldConfigClass, worldConfig);
-                return worldConfig;
-            } catch (final ReflectiveOperationException ex) {
-                throw new RuntimeException(ex);
-            }
+            return this.createWorldConfig(name);
         });
+    }
+
+    private W createWorldConfig(String id) {
+        if (this.worldConfigs == null || this.worldConfigClass == null) {
+            throw new IllegalArgumentException("No world config");
+        }
+
+        try {
+            final Constructor<W> ctr = this.worldConfigClass.getDeclaredConstructor(Config.class, String.class);
+            ctr.setAccessible(true);
+            final W worldConfig = ctr.newInstance(this, id);
+            this.readConfig(this.worldConfigClass, worldConfig);
+            return worldConfig;
+        } catch (final ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void readConfig(Class<?> clazz, Object instance) {
@@ -101,48 +129,34 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
                 throw new RuntimeException("Error invoking " + method, ex);
             }
         }
+    }
 
+    protected final String getString(String path, String def) {
+        return this.config.node((Object[]) splitPath(path)).getString(def);
+    }
+
+    protected final boolean getBoolean(String path, boolean def) {
+        return this.config.node((Object[]) splitPath(path)).getBoolean(def);
+    }
+
+    protected final int getInt(String path, int def) {
+        return this.config.node((Object[]) splitPath(path)).getInt(def);
+    }
+
+    protected final double getDouble(String path, double def) {
+        return this.config.node((Object[]) splitPath(path)).getDouble(def);
+    }
+
+    protected final <T> List<T> getList(Class<T> elementType, String path, List<T> def) {
         try {
-            this.config.save(this.configFile);
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not save " + this.configFile, ex);
+            return this.config.node((Object[]) splitPath(path)).getList(elementType, def);
+        } catch (SerializationException e) {
+            throw rethrow(e);
         }
     }
 
-    protected void set(String path, Object val) {
-        this.config.addDefault(path, val);
-        this.config.set(path, val);
-    }
-
-    protected String getString(String path, String def) {
-        this.config.addDefault(path, def);
-        return this.config.getString(path, this.config.getString(path));
-    }
-
-    protected boolean getBoolean(String path, boolean def) {
-        this.config.addDefault(path, def);
-        return this.config.getBoolean(path, this.config.getBoolean(path));
-    }
-
-    protected int getInt(String path, int def) {
-        this.config.addDefault(path, def);
-        return this.config.getInt(path, this.config.getInt(path));
-    }
-
-    protected double getDouble(String path, double def) {
-        this.config.addDefault(path, def);
-        return this.config.getDouble(path, this.config.getDouble(path));
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> getList(String path, List<T> def) {
-        this.config.addDefault(path, def);
-        return (List<T>) this.config.getList(path, this.config.getList(path));
-    }
-
-    protected Color getColor(String path, Color def) {
-        this.config.addDefault(path, colorToHex(def));
-        return hexToColor(this.config.getString(path, this.config.getString(path)));
+    protected final Color getColor(String path, Color def) {
+        return hexToColor(this.getString(path, colorToHex(def)));
     }
 
     private static String colorToHex(final Color color) {
@@ -156,5 +170,14 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         String stripped = hex.replace("#", "");
         int rgb = (int) Long.parseLong(stripped, 16);
         return new Color(rgb);
+    }
+
+    static String[] splitPath(final String path) {
+        return path.split("\\.");
+    }
+
+    @SuppressWarnings("unchecked")
+    static <X extends Throwable> RuntimeException rethrow(final Throwable t) throws X {
+        throw (X) t;
     }
 }

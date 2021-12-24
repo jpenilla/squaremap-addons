@@ -49,42 +49,46 @@ public final class MobsWorldConfig extends WorldConfig {
 
     private void allowedTypes() {
         this.allowedTypes.clear();
-        this.getList("allowed-mobs", List.of(
-            "cat",
-            "chicken",
-            "cod",
-            "cow",
-            "dolphin",
-            "fox",
-            "horse",
-            "iron_golem",
-            "llama",
-            "mooshroom",
-            "mule",
-            "ocelot",
-            "panda",
-            "parrot",
-            "pig",
-            "polar_bear",
-            "pufferfish",
-            "rabbit",
-            "salmon",
-            "sheep",
-            "snow_golem",
-            "squid",
-            "strider",
-            "trader_llama",
-            "tropical_fish",
-            "turtle",
-            "villager",
-            "wandering_trader",
-            "wolf"
-        )).forEach(key -> {
-            if (key.toString().equals("*")) {
+        this.getList(
+            String.class,
+            "allowed-mobs",
+            List.of(
+                "cat",
+                "chicken",
+                "cod",
+                "cow",
+                "dolphin",
+                "fox",
+                "horse",
+                "iron_golem",
+                "llama",
+                "mooshroom",
+                "mule",
+                "ocelot",
+                "panda",
+                "parrot",
+                "pig",
+                "polar_bear",
+                "pufferfish",
+                "rabbit",
+                "salmon",
+                "sheep",
+                "snow_golem",
+                "squid",
+                "strider",
+                "trader_llama",
+                "tropical_fish",
+                "turtle",
+                "villager",
+                "wandering_trader",
+                "wolf"
+            )
+        ).forEach(key -> {
+            if (key.equals("*")) {
                 this.allowedTypes.addAll(Icons.BY_TYPE.keySet());
                 return;
             }
-            EntityType type = parseEntityType(key.toString());
+            EntityType type = parseEntityType(key);
             if (type != null) {
                 this.allowedTypes.add(type);
             } else {

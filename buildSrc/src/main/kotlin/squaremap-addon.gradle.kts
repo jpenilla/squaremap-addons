@@ -26,6 +26,14 @@ tasks {
             "xyz.jpenilla.squaremap.addon.common",
             "xyz.jpenilla.squaremap.addon.${project.name.substring("squaremap-".length)}.shaded.common"
         )
+
+        fun reloc(pkg: String) = relocate(
+            pkg,
+            "xyz.jpenilla.squaremap.addon.${project.name.substring("squaremap-".length)}.shaded.$pkg"
+        )
+        reloc("io.leangen.geantyref")
+        reloc("org.spongepowered.configurate")
+        reloc("org.yaml.snakeyaml")
     }
 
     assemble {

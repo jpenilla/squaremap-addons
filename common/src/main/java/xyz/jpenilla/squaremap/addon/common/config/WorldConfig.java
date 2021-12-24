@@ -12,39 +12,39 @@ public abstract class WorldConfig {
         this.worldIdentifier = world;
     }
 
-    protected void set(String path, Object val) {
-        this.parent.config.addDefault(wrapDefaultPath(path), val);
-        this.parent.config.set(wrapDefaultPath(path), val);
-        if (this.parent.config.get(this.wrapPath(path)) != null) {
-            this.parent.config.addDefault(this.wrapPath(path), val);
-            this.parent.config.set(this.wrapPath(path), val);
+    protected final boolean getBoolean(String path, boolean def) {
+        if (this.parent.config.node((Object[]) Config.splitPath(path)).raw() == null) {
+            return this.parent.getBoolean(wrapDefaultPath(path), def);
         }
+        return this.parent.getBoolean(this.wrapPath(path), this.parent.getBoolean(wrapDefaultPath(path), def));
     }
 
-    protected boolean getBoolean(String path, boolean def) {
-        this.parent.config.addDefault(wrapDefaultPath(path), def);
-        return this.parent.config.getBoolean(this.wrapPath(path), this.parent.config.getBoolean(wrapDefaultPath(path)));
+    protected final int getInt(String path, int def) {
+        if (this.parent.config.node((Object[]) Config.splitPath(path)).raw() == null) {
+            return this.parent.getInt(wrapDefaultPath(path), def);
+        }
+        return this.parent.getInt(this.wrapPath(path), this.parent.getInt(wrapDefaultPath(path), def));
     }
 
-    protected int getInt(String path, int def) {
-        this.parent.config.addDefault(wrapDefaultPath(path), def);
-        return this.parent.config.getInt(this.wrapPath(path), this.parent.config.getInt(wrapDefaultPath(path)));
+    protected final double getDouble(String path, double def) {
+        if (this.parent.config.node((Object[]) Config.splitPath(path)).raw() == null) {
+            return this.parent.getDouble(wrapDefaultPath(path), def);
+        }
+        return this.parent.getDouble(this.wrapPath(path), this.parent.getDouble(wrapDefaultPath(path), def));
     }
 
-    protected double getDouble(String path, double def) {
-        this.parent.config.addDefault(wrapDefaultPath(path), def);
-        return this.parent.config.getDouble(this.wrapPath(path), this.parent.config.getDouble(wrapDefaultPath(path)));
+    protected final String getString(String path, String def) {
+        if (this.parent.config.node((Object[]) Config.splitPath(path)).raw() == null) {
+            return this.parent.getString(wrapDefaultPath(path), def);
+        }
+        return this.parent.getString(this.wrapPath(path), this.parent.getString(wrapDefaultPath(path), def));
     }
 
-    protected String getString(String path, String def) {
-        this.parent.config.addDefault(wrapDefaultPath(path), def);
-        return this.parent.config.getString(this.wrapPath(path), this.parent.config.getString(wrapDefaultPath(path)));
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> getList(String path, List<T> def) {
-        this.parent.config.addDefault(wrapDefaultPath(path), def);
-        return (List<T>) this.parent.config.getList(this.wrapPath(path), this.parent.config.getList(wrapDefaultPath(path)));
+    protected final <T> List<T> getList(Class<T> elementType, String path, List<T> def) {
+        if (this.parent.config.node((Object[]) Config.splitPath(path)).raw() == null) {
+            return this.parent.getList(elementType, wrapDefaultPath(path), def);
+        }
+        return this.parent.getList(elementType, this.wrapPath(path), this.parent.getList(elementType, wrapDefaultPath(path), def));
     }
 
     private String wrapPath(final String path) {
