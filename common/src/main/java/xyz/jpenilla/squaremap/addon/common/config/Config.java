@@ -137,19 +137,19 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
     }
 
     protected final String getString(String path, String def) {
-        return this.config.node((Object[]) splitPath(path)).getString(def);
+        return this.config.node(splitPath(path)).getString(def);
     }
 
     protected final boolean getBoolean(String path, boolean def) {
-        return this.config.node((Object[]) splitPath(path)).getBoolean(def);
+        return this.config.node(splitPath(path)).getBoolean(def);
     }
 
     protected final int getInt(String path, int def) {
-        return this.config.node((Object[]) splitPath(path)).getInt(def);
+        return this.config.node(splitPath(path)).getInt(def);
     }
 
     protected final double getDouble(String path, double def) {
-        return this.config.node((Object[]) splitPath(path)).getDouble(def);
+        return this.config.node(splitPath(path)).getDouble(def);
     }
 
     protected final <T> List<T> getList(Class<T> elementType, String path, List<T> def) {
@@ -163,7 +163,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
 
     @SuppressWarnings("unchecked")
     private <V> List<V> getList0(Class<V> elementType, final String path, List<V> def) throws SerializationException {
-        final ConfigurationNode node = this.config.node((Object[]) splitPath(path));
+        final ConfigurationNode node = this.config.node(splitPath(path));
         final Type type = TypeFactory.parameterizedClass(List.class, elementType);
         final @Nullable List<V> ret = node.virtual() ? null : (List<V>) node.get(type/*, def*/);
         return ret == null ? storeDefault(node, type, def) : ret;
@@ -179,13 +179,13 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
 
     protected final Color getColor(String path, Color def) {
         try {
-            return this.config.node((Object[]) splitPath(path)).get(Color.class, def);
+            return this.config.node(splitPath(path)).get(Color.class, def);
         } catch (SerializationException e) {
             throw rethrow(e);
         }
     }
 
-    static String[] splitPath(final String path) {
+    static Object[] splitPath(final String path) {
         return path.split("\\.");
     }
 
