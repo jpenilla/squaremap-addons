@@ -1,10 +1,12 @@
 package xyz.jpenilla.squaremap.addon.common.config;
 
+import io.leangen.geantyref.TypeFactory;
 import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +22,8 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import xyz.jpenilla.squaremap.api.MapWorld;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
+
+import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("unused")
 public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
@@ -51,6 +55,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
             .path(this.configFile)
             .nodeStyle(NodeStyle.BLOCK)
+            .defaultOptions(options -> options.serializers(builder -> builder.register(ColorSerializer.INSTANCE)))
             .build();
 
         try {
@@ -149,27 +154,35 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
 
     protected final <T> List<T> getList(Class<T> elementType, String path, List<T> def) {
         try {
-            return this.config.node((Object[]) splitPath(path)).getList(elementType, def);
+            return this.getList0(elementType, path, def);
+            //return this.config.node((Object[]) splitPath(path)).getList(elementType, def); // turns empty list -> def
         } catch (SerializationException e) {
             throw rethrow(e);
         }
     }
 
-    protected final Color getColor(String path, Color def) {
-        return hexToColor(this.getString(path, colorToHex(def)));
+    @SuppressWarnings("unchecked")
+    private <V> List<V> getList0(Class<V> elementType, final String path, List<V> def) throws SerializationException {
+        final ConfigurationNode node = this.config.node((Object[]) splitPath(path));
+        final Type type = TypeFactory.parameterizedClass(List.class, elementType);
+        final @Nullable List<V> ret = node.virtual() ? null : (List<V>) node.get(type/*, def*/);
+        return ret == null ? storeDefault(node, type, def) : ret;
     }
 
-    private static String colorToHex(final Color color) {
-        return Integer.toHexString(color.getRGB() & 0x00FFFFFF);
-    }
-
-    private static Color hexToColor(final String hex) {
-        if (hex == null) {
-            return Color.RED;
+    private static <V> V storeDefault(final ConfigurationNode node, final Type type, final V defValue) throws SerializationException {
+        requireNonNull(defValue, "defValue");
+        if (node.options().shouldCopyDefaults()) {
+            node.set(type, defValue);
         }
-        String stripped = hex.replace("#", "");
-        int rgb = (int) Long.parseLong(stripped, 16);
-        return new Color(rgb);
+        return defValue;
+    }
+
+    protected final Color getColor(String path, Color def) {
+        try {
+            return this.config.node((Object[]) splitPath(path)).get(Color.class, def);
+        } catch (SerializationException e) {
+            throw rethrow(e);
+        }
     }
 
     static String[] splitPath(final String path) {

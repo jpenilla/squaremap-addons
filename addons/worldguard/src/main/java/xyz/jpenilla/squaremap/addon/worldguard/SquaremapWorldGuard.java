@@ -11,6 +11,7 @@ public final class SquaremapWorldGuard extends JavaPlugin {
     @Override
     public void onEnable() {
         this.config = new WGConfig(this);
+        this.config.reload();
 
         this.squaremapHook = new SquaremapHook(this);
     }
