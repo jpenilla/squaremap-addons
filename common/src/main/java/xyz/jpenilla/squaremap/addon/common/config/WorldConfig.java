@@ -48,7 +48,7 @@ public abstract class WorldConfig {
     }
 
     private boolean virtual(String path) {
-        return this.parent.config.node((Object[]) Config.splitPath(path)).virtual();
+        return this.parent.config.node(Config.splitPath(path)).virtual();
     }
 
     private String wrapPath(final String path) {
