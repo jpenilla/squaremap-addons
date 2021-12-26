@@ -4,6 +4,7 @@ import io.leangen.geantyref.TypeFactory;
 import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -130,6 +131,8 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             try {
                 method.setAccessible(true);
                 method.invoke(instance);
+            } catch (InvocationTargetException ex) {
+                throw new RuntimeException("Error invoking " + method, ex.getCause());
             } catch (Exception ex) {
                 throw new RuntimeException("Error invoking " + method, ex);
             }
