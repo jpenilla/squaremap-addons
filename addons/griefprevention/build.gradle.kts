@@ -1,3 +1,5 @@
+description = "GriefPrevention integration for squaremap"
+
 dependencies {
     compileOnly("com.github.TechFortress:GriefPrevention:16.17.1")
 }

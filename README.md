@@ -22,6 +22,8 @@ Various addons for [squaremap](https://github.com/jpenilla/squaremap)
   - Shows placed signs on squaremap
 - [squaremap-skins](https://github.com/jpenilla/squaremap-addons/tree/master/addons/skins)
   - Custom skin support for squaremap
+- [squaremap-vanish](https://github.com/jpenilla/squaremap-addons/tree/master/addons/vanish)
+  - Integration with various vanish plugins for squaremap
 - [squaremap-worldguard](https://github.com/jpenilla/squaremap-addons/tree/master/addons/worldguard)
   - [WorldGuard](https://enginehub.org/worldguard/) integration for squaremap
 
