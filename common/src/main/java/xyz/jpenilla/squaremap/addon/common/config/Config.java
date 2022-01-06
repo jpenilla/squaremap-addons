@@ -193,7 +193,14 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
     }
 
     static Object[] splitPath(final String path) {
-        return path.split("\\.");
+        final String[] split = path.split("\\.");
+        for (int i = 0; i < split.length; i++) {
+            final String s = split[i];
+            if (s.contains(WorldConfig.DOT)) {
+                split[i] = s.replace(WorldConfig.DOT, ".");
+            }
+        }
+        return split;
     }
 
     @SuppressWarnings("unchecked")

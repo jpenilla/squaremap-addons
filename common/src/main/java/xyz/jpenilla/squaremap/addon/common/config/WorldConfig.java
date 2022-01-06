@@ -4,12 +4,14 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class WorldConfig {
+    public static final String DOT = "____dot____";
+
     private final String worldIdentifier;
     private final Config<?, ?> parent;
 
     protected WorldConfig(final Config<?, ?> parent, final String world) {
         this.parent = parent;
-        this.worldIdentifier = world;
+        this.worldIdentifier = world.replace(".", DOT);
     }
 
     protected final boolean getBoolean(String path, boolean def) {
