@@ -6,6 +6,8 @@
 Various addons for [squaremap](https://github.com/jpenilla/squaremap)
 
 ## Addon list
+- [squaremap-banners](https://github.com/jpenilla/squaremap-addons/tree/master/addons/banners)
+  - Shows banners on the map in a similar way to vanilla maps
 - [squaremap-claimchunk](https://github.com/jpenilla/squaremap-addons/tree/master/addons/claimchunk)
   - [ClaimChunk](https://www.spigotmc.org/resources/claimchunk.44458/) integration for squaremap
 - [squaremap-deathspot](https://github.com/jpenilla/squaremap-addons/tree/master/addons/deathspot)
@@ -41,6 +43,7 @@ Built artifacts will be saved in `./build/libs/`.
 <details>
   <summary>The source code for some modules is derivative of works in the following repositories:</summary>
 
+- squaremap-banners: [Pl3xMap-Banners](https://github.com/granny/Pl3xMap-Banners)
 - squaremap-claimchunk: [Pl3xMap-ClaimChunk](https://github.com/pl3xgaming/Pl3xMap-ClaimChunk)
 - squaremap-deathspot: [Pl3xMap-DeathSpot](https://github.com/pl3xgaming/Pl3xMap-DeathSpot)
 - squaremap-essentialsx: [Pl3xMap-Essentials](https://github.com/pl3xgaming/Pl3xMap-Essentials)
