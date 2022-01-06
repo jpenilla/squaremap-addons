@@ -16,6 +16,8 @@ public final class GPConfig extends Config<GPConfig, WorldConfig> {
     public Color fillColor = Color.GREEN;
     public double fillOpacity = 0.2D;
     public String stringsPublic = "Public";
+    public int zIndex = 99;
+    public int layerPriority = 99;
     public String claimTooltip = "Claim Owner: <span style=\"font-weight:bold;\">{owner}</span><br/>" +
         "Permission Trust: <span style=\"font-weight:bold;\">{managers}</span><br/>" +
         "Trust: <span style=\"font-weight:bold;\">{builders}</span><br/>" +
@@ -40,6 +42,8 @@ public final class GPConfig extends Config<GPConfig, WorldConfig> {
         this.stringsPublic = this.getString("settings.strings.public", this.stringsPublic);
         this.claimTooltip = this.getString("settings.region.tooltip.regular-claim", this.claimTooltip);
         this.adminClaimTooltip = this.getString("settings.region.tooltip.admin-claim", this.adminClaimTooltip);
+        this.zIndex = this.getInt("settings.control.z-index", this.zIndex);
+        this.layerPriority = this.getInt("settings.control.layer-priority", this.layerPriority);
     }
 
     public GPConfig(Plugin plugin) {

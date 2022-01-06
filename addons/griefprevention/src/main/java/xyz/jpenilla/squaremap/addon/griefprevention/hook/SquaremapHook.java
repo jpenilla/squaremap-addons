@@ -28,6 +28,8 @@ public final class SquaremapHook {
                 .builder(plugin.config().controlLabel)
                 .showControls(plugin.config().controlShow)
                 .defaultHidden(plugin.config().controlHide)
+                .zIndex(plugin.config().zIndex)
+                .layerPriority(plugin.config().layerPriority)
                 .build();
             world.layerRegistry().register(GP_LAYER_KEY, provider);
             SquaremapTask task = new SquaremapTask(plugin, world, provider);
