@@ -45,6 +45,9 @@ public class BannersListener implements Listener {
         if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.FILLED_MAP) {
             return;
         }
+        if (!event.getPlayer().isSneaking()) {
+            return;
+        }
         if (!event.getPlayer().hasPermission("squaremap.banners.admin")) {
             return;
         }
