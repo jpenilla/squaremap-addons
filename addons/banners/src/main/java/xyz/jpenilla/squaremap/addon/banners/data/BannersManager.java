@@ -2,6 +2,8 @@ package xyz.jpenilla.squaremap.addon.banners.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Level;
 import org.bukkit.Chunk;
@@ -10,29 +12,46 @@ import org.bukkit.block.BlockState;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.jpenilla.squaremap.addon.banners.SquaremapBanners;
+import xyz.jpenilla.squaremap.addon.common.config.Util;
 import xyz.jpenilla.squaremap.api.Key;
+import xyz.jpenilla.squaremap.api.WorldIdentifier;
 
-public class BannersManager {
+public final class BannersManager {
     private final SquaremapBanners plugin;
-    private final File dataDir;
+    private final Path dataDir;
 
     public BannersManager(SquaremapBanners plugin) {
         this.plugin = plugin;
-        this.dataDir = new File(plugin.getDataFolder(), "data");
+        this.dataDir = new File(plugin.getDataFolder(), "data").toPath();
 
-        if (!this.dataDir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            this.dataDir.mkdirs();
+        if (!Files.exists(this.dataDir)) {
+            try {
+                Files.createDirectories(this.dataDir);
+            } catch (final IOException e) {
+                Util.rethrow(e);
+            }
         }
     }
 
+    private Path dataFile(final WorldIdentifier identifier) {
+        final Path resolve = this.dataDir.resolve(identifier.asString().replace(":", "_") + ".yml");
+        try {
+            final Path old = this.dataDir.resolve(identifier + ".yml");
+            if (Files.exists(old)) {
+                Files.move(old, resolve);
+            }
+        } catch (final Exception ignore) {
+        }
+        return resolve;
+    }
+
     public void load() {
-        plugin.squaremapHook().getProviders().forEach((uuid, provider) -> {
+        this.plugin.squaremapHook().getProviders().forEach((worldIdentifier, provider) -> {
             YamlConfiguration config = new YamlConfiguration();
             try {
-                File file = new File(dataDir, uuid + ".yml");
+                File file = this.dataFile(worldIdentifier).toFile();
                 if (file.exists()) {
-                    this.plugin.debug("Loading " + uuid + ".yml");
+                    this.plugin.debug("Loading " + file);
                     config.load(file);
                 }
             } catch (IOException | InvalidConfigurationException e) {
@@ -50,14 +69,14 @@ public class BannersManager {
                     String name = config.getString(entry + ".name", "Unknown");
                     provider.add(pos, key, name);
                 } catch (Exception e) {
-                    this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + uuid, e);
+                    this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + worldIdentifier, e);
                 }
             });
         });
     }
 
     public void save() {
-        plugin.squaremapHook().getProviders().forEach((uuid, provider) -> {
+        this.plugin.squaremapHook().getProviders().forEach((worldIdentifier, provider) -> {
             YamlConfiguration config = new YamlConfiguration();
             provider.getData().forEach((pos, data) -> {
                 String entry = pos.x() + "," + pos.y() + "," + pos.z();
@@ -66,8 +85,9 @@ public class BannersManager {
                 config.set(entry + ".name", data.name());
             });
             try {
-                this.plugin.debug("Saving data/" + uuid + ".yml ...");
-                config.save(new File(new File(plugin.getDataFolder(), "data"), uuid + ".yml"));
+                final Path path = this.dataFile(worldIdentifier);
+                this.plugin.debug("Saving data at " + path + " ...");
+                config.save(path.toFile());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,7 +95,7 @@ public class BannersManager {
     }
 
     public void removeBanner(BlockState state) {
-        BannerLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
+        BannerLayerProvider provider = this.plugin.squaremapHook().getProvider(state.getWorld());
         if (provider == null) {
             return;
         }
@@ -84,7 +104,7 @@ public class BannersManager {
     }
 
     public void putBanner(BlockState state, String name) {
-        BannerLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
+        BannerLayerProvider provider = this.plugin.squaremapHook().getProvider(state.getWorld());
         if (provider == null) {
             return;
         }
@@ -96,7 +116,7 @@ public class BannersManager {
         int minZ = chunk.getZ();
         int maxX = minX + 16;
         int maxZ = minZ + 16;
-        BannerLayerProvider provider = plugin.squaremapHook().getProvider(chunk.getWorld());
+        BannerLayerProvider provider = this.plugin.squaremapHook().getProvider(chunk.getWorld());
         if (provider != null) {
             provider.getPositions().forEach(pos -> {
                 if (pos.x() >= minX && pos.z() >= minZ &&
