@@ -20,7 +20,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-import xyz.jpenilla.squaremap.api.MapWorld;
+import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
 
@@ -99,7 +99,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
 
         return this.worldConfigs.computeIfAbsent(identifier, id -> {
             final String name = SquaremapProvider.get().getWorldIfEnabled(identifier)
-                .map(MapWorld::name) // use names for now
+                .map(mapWorld -> BukkitAdapter.bukkitWorld(mapWorld).getName()) // use names for now
                 .orElseThrow();
 
             return this.createWorldConfig(name);

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.WGHook;
+import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.MapWorld;
 import xyz.jpenilla.squaremap.api.Point;
@@ -80,7 +81,7 @@ public final class SquaremapTask extends BukkitRunnable {
             .fillOpacity(this.plugin.config().fillOpacity)
             .clickTooltip(
                 this.plugin.config().claimTooltip
-                    .replace("{world}", this.world.name())
+                    .replace("{world}", BukkitAdapter.bukkitWorld(this.world).getName()) // use names for now
                     .replace("{id}", region.getId())
                     .replace("{owner}", region.getOwners().toPlayersString())
                     .replace("{regionname}", region.getId())

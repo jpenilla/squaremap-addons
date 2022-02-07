@@ -2,7 +2,7 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         maven("https://papermc.io/repo/repository/maven-public/")
-        maven("https://repo.jpenilla.xyz/snapshots/") {
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
             mavenContent {
                 snapshotsOnly()
                 includeGroup("xyz.jpenilla")
