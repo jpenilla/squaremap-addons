@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -32,6 +33,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
 
     private final Class<C> configClass;
     private final Path configFile;
+    private final YamlConfigurationLoader loader;
     private final @Nullable Class<W> worldConfigClass;
     private final @Nullable Map<WorldIdentifier, W> worldConfigs;
     ConfigurationNode config;
@@ -50,17 +52,16 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         this.worldConfigClass = worldConfigClass;
         this.worldConfigs = worldConfigClass == null ? null : new ConcurrentHashMap<>();
         this.configFile = plugin.getDataFolder().toPath().resolve(CONFIG_FILE_NAME);
-    }
-
-    public final void reload() {
-        final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+        this.loader = YamlConfigurationLoader.builder()
             .path(this.configFile)
             .nodeStyle(NodeStyle.BLOCK)
             .defaultOptions(options -> options.serializers(builder -> builder.register(ColorSerializer.INSTANCE)))
             .build();
+    }
 
+    public final void reload() {
         try {
-            this.config = loader.load();
+            this.config = this.loader.load();
         } catch (IOException ex) {
             throw new RuntimeException("Could not load config.yml, exception occurred (are there syntax errors?)", ex);
         }
@@ -76,7 +77,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             this.worldConfigs.clear();
 
             if (removed.isEmpty()) {
-                this.createWorldConfig("fake-world-999999999999999"); // load default section (dum but works)
+                this.createWorldConfig("fake-world-999999999999999", "fake-world-777777777777"); // load default section (dum but works)
             } else {
                 // re-load previously loaded
                 for (final WorldIdentifier identifier : removed) {
@@ -85,8 +86,12 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             }
         }
 
+        this.save();
+    }
+
+    private void save() {
         try {
-            loader.save(this.config);
+            this.loader.save(this.config);
         } catch (IOException ex) {
             throw new RuntimeException("Could not save " + this.configFile, ex);
         }
@@ -98,19 +103,20 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         }
 
         return this.worldConfigs.computeIfAbsent(identifier, id -> {
-            final String name = SquaremapProvider.get().getWorldIfEnabled(identifier)
-                .map(mapWorld -> BukkitAdapter.bukkitWorld(mapWorld).getName()) // use names for now
+            final World world = SquaremapProvider.get().getWorldIfEnabled(id)
+                .map(BukkitAdapter::bukkitWorld)
                 .orElseThrow();
 
-            return this.createWorldConfig(name);
+            return this.createWorldConfig(world.getKey().asString(), world.getName());
         });
     }
 
-    private W createWorldConfig(String id) {
+    private W createWorldConfig(final String id, final String oldId) {
         if (this.worldConfigs == null || this.worldConfigClass == null) {
             throw new IllegalArgumentException("No world config");
         }
 
+        this.migrateLevelSection(id, oldId);
         try {
             final Constructor<W> ctr = this.worldConfigClass.getDeclaredConstructor(Config.class, String.class);
             ctr.setAccessible(true);
@@ -137,6 +143,21 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
                 throw new RuntimeException("Error invoking " + method, ex);
             }
         }
+    }
+
+    public final void migrateLevelSection(final String id, final String oldId) {
+        final ConfigurationNode oldNode = this.config.node("world-settings", oldId);
+        if (oldNode.virtual()) {
+            return;
+        }
+        final ConfigurationNode newNode = this.config.node("world-settings", id);
+        try {
+            newNode.set(oldNode);
+            oldNode.set(null);
+        } catch (final SerializationException e) {
+            rethrow(e);
+        }
+        this.save();
     }
 
     private ConfigurationNode node(String path) {
