@@ -18,8 +18,7 @@ public final class SquaremapHook {
 
     public SquaremapHook(SquaremapWorldGuard plugin) {
         SquaremapProvider.get().mapWorlds().forEach(world -> {
-            SimpleLayerProvider provider = SimpleLayerProvider
-                .builder(plugin.config().controlLabel)
+            SimpleLayerProvider provider = SimpleLayerProvider.builder(plugin.config().controlLabel)
                 .showControls(plugin.config().controlShow)
                 .defaultHidden(plugin.config().controlHide)
                 .build();

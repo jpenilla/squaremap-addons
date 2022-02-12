@@ -3,6 +3,7 @@ package xyz.jpenilla.squaremap.addon.worldguard.task;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import com.sk89q.worldguard.util.profile.cache.ProfileCache;
@@ -51,6 +52,11 @@ public final class SquaremapTask extends BukkitRunnable {
     }
 
     private void handleClaim(ProtectedRegion region) {
+        final StateFlag.State state = region.getFlag(this.plugin.visibleFlag());
+        if (state == StateFlag.State.DENY) {
+            return;
+        }
+
         Marker marker;
 
         if (region.getType() == RegionType.CUBOID) {
