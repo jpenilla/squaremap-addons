@@ -117,9 +117,19 @@ public final class SquaremapSkins extends JavaPlugin {
 
     private static void saveTexture(String name, String url) {
         try {
-            BufferedImage img = ImageIO.read(new URL(url)).getSubimage(8, 8, 8, 8);
+            BufferedImage skin = ImageIO.read(new URL(url));
+            BufferedImage head = skin.getSubimage(8, 8, 8, 8);
+            BufferedImage mask = skin.getSubimage(40, 8, 8, 8);
+            for (int y = 0; y < 8; y++) {
+                for (int x = 0; x < 8; x++) {
+                    int rgb = mask.getRGB(x, y);
+                    if ((rgb & 0xff000000) != 0) {
+                        head.setRGB(x, y, rgb);
+                    }
+                }
+            }
             File file = new File(skinsDir, name + ".png");
-            ImageIO.write(img, "png", file);
+            ImageIO.write(head, "png", file);
         } catch (IOException e) {
             e.printStackTrace();
         }
