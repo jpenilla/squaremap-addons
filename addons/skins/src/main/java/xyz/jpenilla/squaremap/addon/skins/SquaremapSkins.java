@@ -91,7 +91,7 @@ public final class SquaremapSkins extends JavaPlugin {
 
         @Override
         public void run() {
-            saveTexture(name, url);
+            instance.saveTexture(name, url);
         }
     }
 
@@ -115,13 +115,13 @@ public final class SquaremapSkins extends JavaPlugin {
         return null;
     }
 
-    private static void saveTexture(String name, String url) {
+    private void saveTexture(String name, String url) {
         try {
             BufferedImage img = ImageIO.read(new URL(url)).getSubimage(8, 8, 8, 8);
             File file = new File(skinsDir, name + ".png");
             ImageIO.write(img, "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            this.getSLF4JLogger().info("Could not save texture {} to {}", url, new File(skinsDir, name + ".png"), e);
         }
     }
 }
