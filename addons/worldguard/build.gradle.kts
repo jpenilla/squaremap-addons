@@ -1,7 +1,7 @@
 description = "WorldGuard addon for squaremap"
 
 dependencies {
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.4") {
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7") {
         exclude("org.bstats")
         exclude("org.spigotmc")
     }
