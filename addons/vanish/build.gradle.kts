@@ -1,7 +1,7 @@
 description = "Integration with various vanish plugins for squaremap"
 
 dependencies {
-    compileOnly("com.github.LeonMangler:SuperVanish:6.2.0") {
+    compileOnly("com.github.LeonMangler:SuperVanish:6.2.12") {
         isTransitive = false
     }
 }
