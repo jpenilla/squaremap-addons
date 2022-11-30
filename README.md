@@ -28,7 +28,7 @@ Various addons for [squaremap](https://github.com/jpenilla/squaremap)
   - [WorldGuard](https://enginehub.org/worldguard/) integration for squaremap
 
 ## Download
-Download the latest builds from [this link](https://nightly.link/jpenilla/squaremap-addons/workflows/build/master/Package.zip)
+Download the latest builds from [this link](https://nightly.link/jpenilla/squaremap-addons/workflows/build/master/artifacts.zip)
 
 ## Building from source
 
