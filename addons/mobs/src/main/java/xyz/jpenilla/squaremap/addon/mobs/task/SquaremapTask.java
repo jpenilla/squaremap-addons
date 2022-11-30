@@ -1,7 +1,7 @@
 package xyz.jpenilla.squaremap.addon.mobs.task;
 
-import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -65,7 +65,7 @@ public final class SquaremapTask extends BukkitRunnable {
             this.worldConfig.iconSize
         );
 
-        final String name = PaperComponents.plainTextSerializer().serialize(Component.translatable(type.translationKey()));
+        final String name = PlainTextComponentSerializer.plainText().serialize(Component.translatable(type.translationKey()));
 
         icon.markerOptions(
             MarkerOptions.builder()
