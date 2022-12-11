@@ -11,5 +11,5 @@ dependencies {
     compileOnlyApi("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT") {
         exclude("org.yaml", "snakeyaml")
     }
-    compileOnlyApi("xyz.jpenilla:squaremap-api:1.1.8")
+    compileOnlyApi("xyz.jpenilla:squaremap-api:1.1.9")
 }
