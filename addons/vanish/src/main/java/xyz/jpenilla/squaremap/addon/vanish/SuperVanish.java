@@ -7,10 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.jpenilla.squaremap.api.Squaremap;
 
-public record SuperVanish(Squaremap squaremap) implements Listener {
+public record SuperVanish(Squaremap squaremap) implements VanishAdapter {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void hide(final PlayerHideEvent event) {
         this.squaremap.playerManager().hide(event.getPlayer().getUniqueId());
@@ -21,11 +20,8 @@ public record SuperVanish(Squaremap squaremap) implements Listener {
         this.squaremap.playerManager().show(event.getPlayer().getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void join(final PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        if (VanishAPI.isInvisible(player)) {
-            this.squaremap.playerManager().hide(player.getUniqueId());
-        }
+    @Override
+    public boolean isVanished(final Player player) {
+        return VanishAPI.isInvisible(player);
     }
 }
