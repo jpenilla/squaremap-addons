@@ -29,6 +29,7 @@ public final class SquaremapVanish extends JavaPlugin implements Listener {
             this.vanishAdapter = new VanishFallback(this, squaremap);
         }
 
+        this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getPluginManager().registerEvents(vanishAdapter, this);
     }
 
