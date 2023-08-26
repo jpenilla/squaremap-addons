@@ -1,7 +1,7 @@
 description = "EssentialsX addon for squaremap"
 
 dependencies {
-    compileOnly("net.essentialsx:EssentialsX:2.20.0") {
+    compileOnly("net.essentialsx:EssentialsX:2.20.1") {
         isTransitive = false
     }
 }
