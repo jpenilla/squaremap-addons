@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import xyz.jpenilla.squaremap.addon.common.config.Util;
 import xyz.jpenilla.squaremap.addon.signs.config.SignsWorldConfig;
 import xyz.jpenilla.squaremap.api.LayerProvider;
 import xyz.jpenilla.squaremap.api.marker.Icon;
@@ -87,26 +88,26 @@ public final class SignLayerProvider implements LayerProvider {
             return this.worldConfig.blankTooltip;
         } else if (backBlank) {
             return this.worldConfig.frontOnlyTooltip
-                .replace("{line1}", serialize(front[0]))
-                .replace("{line2}", serialize(front[1]))
-                .replace("{line3}", serialize(front[2]))
-                .replace("{line4}", serialize(front[3]));
+                .replace("{line1}", Util.asHtml(front[0]))
+                .replace("{line2}", Util.asHtml(front[1]))
+                .replace("{line3}", Util.asHtml(front[2]))
+                .replace("{line4}", Util.asHtml(front[3]));
         } else if (frontBlank) {
             return this.worldConfig.backOnlyTooltip
-                .replace("{line1}", serialize(back[0]))
-                .replace("{line2}", serialize(back[1]))
-                .replace("{line3}", serialize(back[2]))
-                .replace("{line4}", serialize(back[3]));
+                .replace("{line1}", Util.asHtml(back[0]))
+                .replace("{line2}", Util.asHtml(back[1]))
+                .replace("{line3}", Util.asHtml(back[2]))
+                .replace("{line4}", Util.asHtml(back[3]));
         }
         return this.worldConfig.frontAndBackTooltip
-            .replace("{line1}", serialize(front[0]))
-            .replace("{line2}", serialize(front[1]))
-            .replace("{line3}", serialize(front[2]))
-            .replace("{line4}", serialize(front[3]))
-            .replace("{line1b}", serialize(back[0]))
-            .replace("{line2b}", serialize(back[1]))
-            .replace("{line3b}", serialize(back[2]))
-            .replace("{line4b}", serialize(back[3]));
+            .replace("{line1}", Util.asHtml(front[0]))
+            .replace("{line2}", Util.asHtml(front[1]))
+            .replace("{line3}", Util.asHtml(front[2]))
+            .replace("{line4}", Util.asHtml(front[3]))
+            .replace("{line1b}", Util.asHtml(back[0]))
+            .replace("{line2b}", Util.asHtml(back[1]))
+            .replace("{line3b}", Util.asHtml(back[2]))
+            .replace("{line4b}", Util.asHtml(back[3]));
     }
 
     private static boolean isBlank(final Component[] components) {
@@ -116,10 +117,6 @@ public final class SignLayerProvider implements LayerProvider {
             }
         }
         return true;
-    }
-
-    private static String serialize(final Component c) {
-        return PlainTextComponentSerializer.plainText().serialize(c);
     }
 
     public void remove(Position position) {
