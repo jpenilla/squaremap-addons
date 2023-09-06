@@ -1,6 +1,7 @@
 package xyz.jpenilla.squaremap.addon.signs.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,9 +34,9 @@ public record SignListener(SignsPlugin plugin) implements Listener {
         if (!plugin.getSignManager().isTracked(state)) {
             return;
         }
-        final Component[] edited = event.lines().toArray(new Component[0]);
-        final Component[] front = event.getSide() == Side.FRONT ? edited : state.getSide(Side.FRONT).lines().toArray(new Component[0]);
-        final Component[] back = event.getSide() == Side.BACK ? edited : state.getSide(Side.BACK).lines().toArray(new Component[0]);
+        final List<Component> edited = event.lines();
+        final List<Component> front = event.getSide() == Side.FRONT ? edited : state.getSide(Side.FRONT).lines();
+        final List<Component> back = event.getSide() == Side.BACK ? edited : state.getSide(Side.BACK).lines();
         plugin.getSignManager().putSign(state, front, back);
     }
 
@@ -59,9 +60,7 @@ public record SignListener(SignsPlugin plugin) implements Listener {
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             plugin.getSignManager().removeSign(state);
         } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            plugin.getSignManager().putSign(state,
-                sign.getSide(Side.FRONT).lines().toArray(new Component[0]),
-                sign.getSide(Side.BACK).lines().toArray(new Component[0]));
+            plugin.getSignManager().putSign(state, sign.getSide(Side.FRONT).lines(), sign.getSide(Side.BACK).lines());
         }
     }
 

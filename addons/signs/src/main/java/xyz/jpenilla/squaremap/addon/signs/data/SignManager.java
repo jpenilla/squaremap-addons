@@ -10,10 +10,10 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -23,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import xyz.jpenilla.squaremap.addon.signs.SignsPlugin;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
@@ -30,7 +31,9 @@ import xyz.jpenilla.squaremap.api.WorldIdentifier;
 public final class SignManager {
     private final SignsPlugin plugin;
     private final File dataDir;
-    private final Gson gson = GsonComponentSerializer.gson().populator().apply(new GsonBuilder()).create();
+    private final Gson gson = GsonComponentSerializer.gson().populator().apply(new GsonBuilder())
+        .registerTypeAdapter(Position.class, new Position.TypeAdapter())
+        .create();
 
     public SignManager(SignsPlugin plugin) {
         this.plugin = plugin;
@@ -59,7 +62,7 @@ public final class SignManager {
             }
             data.forEach(entry -> {
                 try {
-                    provider.add(entry.pos, SignType.typeOrDefault(entry.type), entry.frontLines.toArray(new Component[0]), entry.backLines.toArray(new Component[0]));
+                    provider.add(entry.pos, SignType.typeOrDefault(entry.type), entry.frontLines, entry.backLines);
                 } catch (Exception e) {
                     this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + id, e);
                 }
@@ -74,8 +77,8 @@ public final class SignManager {
     public static final class SignMarkerData {
         public Position pos;
         public String type;
-        public List<Component> frontLines;
-        public List<Component> backLines;
+        public @Nullable List<Component> frontLines;
+        public @Nullable List<Component> backLines;
     }
 
     public void save() {
@@ -85,8 +88,8 @@ public final class SignManager {
                 final SignMarkerData s = new SignMarkerData();
                 s.pos = pos;
                 s.type = data.type().name();
-                s.frontLines = Arrays.asList(data.front());
-                s.backLines = Arrays.asList(data.back());
+                s.frontLines = data.front();
+                s.backLines = data.back();
                 list.add(s);
             });
             try (final Writer w = Files.newBufferedWriter(this.dataFile(id))) {
@@ -106,7 +109,7 @@ public final class SignManager {
         provider.remove(Position.of(loc));
     }
 
-    public void putSign(BlockState state, Component[] front, Component[] back) {
+    public void putSign(BlockState state, List<Component> front, List<Component> back) {
         SignLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
         if (provider == null) {
             return;
@@ -162,13 +165,12 @@ public final class SignManager {
                     int y = Integer.parseInt(split[1]);
                     int z = Integer.parseInt(split[2]);
                     Position pos = Position.of(x, y, z);
-                    String[] lines = config.getStringList(entry + ".lines").toArray(new String[0]);
-                    final Component[] back = new Component[]{Component.empty(), Component.empty(), Component.empty(), Component.empty()};
+                    List<String> lines = config.getStringList(entry + ".lines");
                     provider.add(
                         pos,
                         SignType.typeOrDefault(config.getString(entry + ".key").replace("sign_", "")),
-                        Arrays.stream(lines).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toArray(Component[]::new),
-                        back
+                        lines.stream().map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).collect(Collectors.toList()),
+                        List.of(Component.empty(), Component.empty(), Component.empty(), Component.empty())
                     );
                 } catch (final Exception e) {
                     this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + uuid, e);
