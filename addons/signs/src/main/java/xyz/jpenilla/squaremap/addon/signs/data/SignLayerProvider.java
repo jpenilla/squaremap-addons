@@ -71,7 +71,7 @@ public final class SignLayerProvider implements LayerProvider {
         return this.data;
     }
 
-    public Data getData(Position position) {
+    public @Nullable Data getData(Position position) {
         return this.data.get(position);
     }
 

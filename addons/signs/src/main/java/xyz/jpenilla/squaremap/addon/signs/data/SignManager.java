@@ -19,7 +19,6 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,7 +34,7 @@ public final class SignManager {
         .registerTypeAdapter(Position.class, new Position.TypeAdapter())
         .create();
 
-    public SignManager(SignsPlugin plugin) {
+    public SignManager(final SignsPlugin plugin) {
         this.plugin = plugin;
         this.dataDir = new File(plugin.getDataFolder(), "data");
 
@@ -48,7 +47,7 @@ public final class SignManager {
     public void load() {
         this.migrateData();
 
-        this.plugin.squaremapHook().getProviders().forEach((id, provider) -> {
+        this.plugin.layerProviders().providers().forEach((id, provider) -> {
             List<SignMarkerData> data = new ArrayList<>();
             try {
                 Path file = this.dataFile(id);
@@ -82,8 +81,8 @@ public final class SignManager {
     }
 
     public void save() {
-        plugin.squaremapHook().getProviders().forEach((id, provider) -> {
-            List<SignMarkerData> list = new ArrayList<>();
+        this.plugin.layerProviders().providers().forEach((id, provider) -> {
+            final List<SignMarkerData> list = new ArrayList<>();
             provider.getData().forEach((pos, data) -> {
                 final SignMarkerData s = new SignMarkerData();
                 s.pos = pos;
@@ -100,17 +99,16 @@ public final class SignManager {
         });
     }
 
-    public void removeSign(BlockState state) {
-        SignLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
+    public void removeSign(final BlockState state) {
+        final @Nullable SignLayerProvider provider = this.plugin.layerProviders().provider(state.getWorld());
         if (provider == null) {
             return;
         }
-        Location loc = state.getLocation();
-        provider.remove(Position.of(loc));
+        provider.remove(Position.of(state.getLocation()));
     }
 
     public void putSign(BlockState state, List<Component> front, List<Component> back) {
-        SignLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
+        final @Nullable SignLayerProvider provider = this.plugin.layerProviders().provider(state.getWorld());
         if (provider == null) {
             return;
         }
@@ -118,33 +116,34 @@ public final class SignManager {
     }
 
     public boolean isTracked(BlockState state) {
-        SignLayerProvider provider = plugin.squaremapHook().getProvider(state.getWorld());
+        final @Nullable SignLayerProvider provider = this.plugin.layerProviders().provider(state.getWorld());
         if (provider == null) {
             return false;
         }
         return provider.getData(Position.of(state.getLocation())) != null;
     }
 
-    public void checkChunk(Chunk chunk) {
-        int minX = chunk.getX();
-        int minZ = chunk.getZ();
-        int maxX = minX + 16;
-        int maxZ = minZ + 16;
-        SignLayerProvider provider = plugin.squaremapHook().getProvider(chunk.getWorld());
-        if (provider != null) {
-            provider.getPositions().forEach(pos -> {
-                if (pos.x() >= minX && pos.z() >= minZ &&
-                    pos.x() <= maxX && pos.z() <= maxZ &&
-                    !pos.isSign(chunk.getWorld())) {
-                    provider.remove(pos);
-                }
-            });
+    public void checkChunk(final Chunk chunk) {
+        final int minX = chunk.getX();
+        final int minZ = chunk.getZ();
+        final int maxX = minX + 16;
+        final int maxZ = minZ + 16;
+        final SignLayerProvider provider = this.plugin.layerProviders().provider(chunk.getWorld());
+        if (provider == null) {
+            return;
         }
+        provider.getPositions().forEach(pos -> {
+            if (pos.x() >= minX && pos.z() >= minZ
+                && pos.x() <= maxX && pos.z() <= maxZ
+                && !pos.isSign(chunk.getWorld())) {
+                provider.remove(pos);
+            }
+        });
     }
 
     private void migrateData() {
         final boolean[] migrated = new boolean[]{false};
-        this.plugin.squaremapHook().getProviders().forEach((id, provider) -> {
+        this.plugin.layerProviders().providers().forEach((id, provider) -> {
             final UUID uuid = Bukkit.getWorld(BukkitAdapter.namespacedKey(id)).getUID();
             final YamlConfiguration config = new YamlConfiguration();
             File file = new File(this.dataDir, uuid + ".yml");
@@ -180,7 +179,7 @@ public final class SignManager {
         });
         if (migrated[0]) {
             this.save();
-            this.plugin.squaremapHook().getProviders().forEach((id, provider) -> provider.clear());
+            this.plugin.layerProviders().providers().forEach((id, provider) -> provider.clear());
         }
     }
 }

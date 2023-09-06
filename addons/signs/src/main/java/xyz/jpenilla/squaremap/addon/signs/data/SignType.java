@@ -38,7 +38,7 @@ public enum SignType {
         try {
             return SignType.valueOf(name.toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException e) {
-            SignsPlugin.getInstance().getLogger().warning("Missing SignType for " + name);
+            SignsPlugin.instance().getLogger().warning("Missing SignType for " + name);
             return OAK;
         }
     }

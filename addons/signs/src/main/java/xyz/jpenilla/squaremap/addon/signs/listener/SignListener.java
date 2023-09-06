@@ -31,13 +31,13 @@ public record SignListener(SignsPlugin plugin) implements Listener {
             return;
         }
         Sign state = (Sign) event.getBlock().getState();
-        if (!plugin.getSignManager().isTracked(state)) {
+        if (!plugin.signManager().isTracked(state)) {
             return;
         }
         final List<Component> edited = event.lines();
         final List<Component> front = event.getSide() == Side.FRONT ? edited : state.getSide(Side.FRONT).lines();
         final List<Component> back = event.getSide() == Side.BACK ? edited : state.getSide(Side.BACK).lines();
-        plugin.getSignManager().putSign(state, front, back);
+        plugin.signManager().putSign(state, front, back);
     }
 
     @EventHandler
@@ -58,9 +58,9 @@ public record SignListener(SignsPlugin plugin) implements Listener {
         }
         event.setCancelled(true);
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            plugin.getSignManager().removeSign(state);
+            plugin.signManager().removeSign(state);
         } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            plugin.getSignManager().putSign(state, sign.getSide(Side.FRONT).lines(), sign.getSide(Side.BACK).lines());
+            plugin.signManager().putSign(state, sign.getSide(Side.FRONT).lines(), sign.getSide(Side.BACK).lines());
         }
     }
 
@@ -106,7 +106,7 @@ public record SignListener(SignsPlugin plugin) implements Listener {
 
     private void remove(BlockState state) {
         if (state instanceof Sign) {
-            plugin.getSignManager().removeSign(state);
+            plugin.signManager().removeSign(state);
         }
     }
 }
