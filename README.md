@@ -1,6 +1,6 @@
 # squaremap-addons
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jpenilla/squaremap-addons/Build)](https://github.com/jpenilla/squaremap-addons/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/jpenilla/squaremap-addons/build.yml?branch=master)](https://github.com/jpenilla/squaremap-addons/actions)
 [![Discord](https://img.shields.io/discord/390942438061113344?color=8C9CFE&label=discord&logo=discord&logoColor=white)](https://discord.gg/PHpuzZS)
 
 Various addons for [squaremap](https://github.com/jpenilla/squaremap)
