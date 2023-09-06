@@ -1,10 +1,12 @@
 package xyz.jpenilla.squaremap.addon.signs.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,11 +29,14 @@ public record SignListener(SignsPlugin plugin) implements Listener {
         if (!event.getPlayer().hasPermission("squaremap.signs.admin")) {
             return;
         }
-        BlockState state = event.getBlock().getState();
+        Sign state = (Sign) event.getBlock().getState();
         if (!plugin.getSignManager().isTracked(state)) {
             return;
         }
-        plugin.getSignManager().putSign(state, event.getLines());
+        final Component[] edited = event.lines().toArray(new Component[0]);
+        final Component[] front = event.getSide() == Side.FRONT ? edited : state.getSide(Side.FRONT).lines().toArray(new Component[0]);
+        final Component[] back = event.getSide() == Side.BACK ? edited : state.getSide(Side.BACK).lines().toArray(new Component[0]);
+        plugin.getSignManager().putSign(state, front, back);
     }
 
     @EventHandler
@@ -41,7 +46,7 @@ public record SignListener(SignsPlugin plugin) implements Listener {
             return;
         }
         BlockState state = block.getState();
-        if (!(state instanceof Sign)) {
+        if (!(state instanceof Sign sign)) {
             return;
         }
         if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.FILLED_MAP) {
@@ -54,7 +59,9 @@ public record SignListener(SignsPlugin plugin) implements Listener {
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             plugin.getSignManager().removeSign(state);
         } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            plugin.getSignManager().putSign(state, ((Sign) state).getLines());
+            plugin.getSignManager().putSign(state,
+                sign.getSide(Side.FRONT).lines().toArray(new Component[0]),
+                sign.getSide(Side.BACK).lines().toArray(new Component[0]));
         }
     }
 

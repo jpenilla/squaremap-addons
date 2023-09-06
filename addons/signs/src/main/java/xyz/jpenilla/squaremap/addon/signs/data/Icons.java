@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import org.bukkit.Material;
 import xyz.jpenilla.squaremap.addon.signs.SignsPlugin;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
@@ -31,22 +30,8 @@ public final class Icons {
             BufferedImage image = ImageIO.read(file);
             SquaremapProvider.get().iconRegistry().register(key, image);
         } catch (IOException e) {
-           throw new RuntimeException("Failed to register signs icon", e);
+            throw new RuntimeException("Failed to register signs icon", e);
         }
         return key;
-    }
-
-    public static Key getIcon(Material type) {
-        return switch (type) {
-            case SPRUCE_SIGN, SPRUCE_WALL_SIGN -> SPRUCE;
-            case BIRCH_SIGN, BIRCH_WALL_SIGN -> BIRCH;
-            case JUNGLE_SIGN, JUNGLE_WALL_SIGN -> JUNGLE;
-            case ACACIA_SIGN, ACACIA_WALL_SIGN -> ACACIA;
-            case DARK_OAK_SIGN, DARK_OAK_WALL_SIGN -> DARK_OAK;
-            case CRIMSON_SIGN, CRIMSON_WALL_SIGN -> CRIMSON;
-            case WARPED_SIGN, WARPED_WALL_SIGN -> WARPED;
-            // case OAK_SIGN, OAK_WALL_SIGN -> OAK;
-            default -> OAK;
-        };
     }
 }

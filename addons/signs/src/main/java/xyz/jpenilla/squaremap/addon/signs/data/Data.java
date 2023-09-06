@@ -1,7 +1,12 @@
 package xyz.jpenilla.squaremap.addon.signs.data;
 
-import xyz.jpenilla.squaremap.api.Key;
+import net.kyori.adventure.text.Component;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 
-public record Data(Marker marker, Key key, String[] lines) {
+public record Data(
+    Marker marker,
+    SignType type,
+    Component[] front,
+    Component[] back
+) {
 }
