@@ -2,6 +2,7 @@ package xyz.jpenilla.squaremap.addon.worldguard.config;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.bukkit.plugin.Plugin;
 import xyz.jpenilla.squaremap.addon.common.config.WorldConfig;
@@ -21,6 +22,8 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
         "Flags<br /><span style=\"font-weight:bold;\">{flags}</span>";
     public ListMode listMode = ListMode.BLACKLIST;
     public List<String> regionList = new ArrayList<>();
+    public ListMode flagListMode = ListMode.BLACKLIST;
+    public List<String> flagList = new ArrayList<>();
 
     @SuppressWarnings("unused")
     private void init() {
@@ -36,11 +39,25 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
         this.claimTooltip = this.getString("settings.region.tooltip", this.claimTooltip);
         this.listMode = this.getEnum("settings.regions.list-mode", ListMode.class, this.listMode);
         this.regionList = this.getList(String.class, "settings.regions.list", this.regionList);
+        this.flagListMode = this.getEnum("settings.flags.list-mode", ListMode.class, this.flagListMode);
+        this.flagList = this.getList(String.class, "settings.flags.list", this.flagList);
     }
 
     public enum ListMode {
-        WHITELIST,
-        BLACKLIST
+        WHITELIST {
+            @Override
+            public <E> boolean allowed(final Collection<E> collection, final E e) {
+                return collection.contains(e);
+            }
+        },
+        BLACKLIST {
+            @Override
+            public <E> boolean allowed(final Collection<E> collection, final E e) {
+                return !collection.contains(e);
+            }
+        };
+
+        public abstract <E> boolean allowed(Collection<E> collection, E e);
     }
 
     public WGConfig(Plugin plugin) {

@@ -52,14 +52,8 @@ public final class SquaremapTask extends BukkitRunnable {
         final WGConfig.ListMode listMode = this.plugin.config().listMode;
         final List<String> list = this.plugin.config().regionList;
         regions.forEach((id, region) -> {
-            if (listMode == WGConfig.ListMode.BLACKLIST) {
-                if (list.contains(id)) {
-                    return;
-                }
-            } else if (listMode == WGConfig.ListMode.WHITELIST) {
-                if (!list.contains(id)) {
-                    return;
-                }
+            if (!listMode.allowed(list, id)) {
+                return;
             }
             this.handleClaim(region);
         });
@@ -114,6 +108,7 @@ public final class SquaremapTask extends BukkitRunnable {
                     .replace(
                         "{flags}",
                         flags.keySet().stream()
+                            .filter(flag -> this.plugin.config().flagListMode.allowed(this.plugin.config().flagList, flag.getName()))
                             .map(flag -> flag.getName() + ": " + flags.get(flag) + "<br/>")
                             .collect(Collectors.joining())
                     )
