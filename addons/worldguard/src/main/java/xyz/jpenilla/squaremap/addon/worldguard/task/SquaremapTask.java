@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
+import xyz.jpenilla.squaremap.addon.worldguard.config.WGConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.WGHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -48,7 +49,20 @@ public final class SquaremapTask extends BukkitRunnable {
         if (regions == null) {
             return;
         }
-        regions.forEach((id, region) -> handleClaim(region));
+        final WGConfig.ListMode listMode = this.plugin.config().listMode;
+        final List<String> list = this.plugin.config().regionList;
+        regions.forEach((id, region) -> {
+            if (listMode == WGConfig.ListMode.BLACKLIST) {
+                if (list.contains(id)) {
+                    return;
+                }
+            } else if (listMode == WGConfig.ListMode.WHITELIST) {
+                if (!list.contains(id)) {
+                    return;
+                }
+            }
+            this.handleClaim(region);
+        });
     }
 
     private void handleClaim(ProtectedRegion region) {

@@ -1,6 +1,8 @@
 package xyz.jpenilla.squaremap.addon.worldguard.config;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.plugin.Plugin;
 import xyz.jpenilla.squaremap.addon.common.config.WorldConfig;
 
@@ -17,6 +19,8 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
     public String claimTooltip = "<span style=\"font-size:120%;\">{regionname}</span><br />" +
         "Owner <span style=\"font-weight:bold;\">{playerowners}</span><br />" +
         "Flags<br /><span style=\"font-weight:bold;\">{flags}</span>";
+    public ListMode listMode = ListMode.BLACKLIST;
+    public List<String> regionList = new ArrayList<>();
 
     @SuppressWarnings("unused")
     private void init() {
@@ -30,6 +34,13 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
         this.fillColor = this.getColor("settings.style.fill.color", this.fillColor);
         this.fillOpacity = this.getDouble("settings.style.fill.opacity", this.fillOpacity);
         this.claimTooltip = this.getString("settings.region.tooltip", this.claimTooltip);
+        this.listMode = this.getEnum("settings.regions.list-mode", ListMode.class, this.listMode);
+        this.regionList = this.getList(String.class, "settings.regions.list", this.regionList);
+    }
+
+    public enum ListMode {
+        WHITELIST,
+        BLACKLIST
     }
 
     public WGConfig(Plugin plugin) {

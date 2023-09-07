@@ -164,6 +164,14 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         return this.config.node(splitPath(path));
     }
 
+    protected final <E extends Enum<E>> E getEnum(String path, Class<E> enumClass, E def) {
+        try {
+            return this.node(path).get(enumClass, def);
+        } catch (final SerializationException e) {
+            throw rethrow(e);
+        }
+    }
+
     protected final String getString(String path, String def) {
         return this.node(path).getString(def);
     }
