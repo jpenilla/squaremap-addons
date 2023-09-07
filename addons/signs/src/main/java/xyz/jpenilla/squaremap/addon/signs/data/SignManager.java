@@ -22,6 +22,7 @@ import org.bukkit.Chunk;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import xyz.jpenilla.squaremap.addon.signs.SignsPlugin;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -107,12 +108,12 @@ public final class SignManager {
         provider.remove(Position.of(state.getLocation()));
     }
 
-    public void putSign(BlockState state, List<Component> front, List<Component> back) {
+    public void putSign(@NonNull BlockState state, @NonNull List<Component> front, @NonNull List<Component> back) {
         final @Nullable SignLayerProvider provider = this.plugin.layerProviders().provider(state.getWorld());
         if (provider == null) {
             return;
         }
-        provider.add(Position.of(state.getLocation()), SignType.typeOrDefault(state.getType()), front, back);
+        provider.add(Position.of(state.getLocation()), SignType.typeOrDefault(state.getType()), List.copyOf(front), List.copyOf(back));
     }
 
     public boolean isTracked(BlockState state) {
