@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.transformation.ConfigurationTransformation;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -37,7 +38,6 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
     private final @Nullable Class<W> worldConfigClass;
     private final @Nullable Map<WorldIdentifier, W> worldConfigs;
     ConfigurationNode config;
-    //static int VERSION;
 
     protected Config(final Class<C> configClass, final Plugin plugin) {
         this(configClass, null, plugin);
@@ -59,16 +59,25 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             .build();
     }
 
+    protected void addVersions(final ConfigurationTransformation.VersionedBuilder versionedBuilder) {
+    }
+
+    private ConfigUpgrader createUpgrader() {
+        return new ConfigUpgrader(builder -> {
+            builder.versionKey("config-version");
+            builder.addVersion(0, ConfigurationTransformation.empty());
+            this.addVersions(builder);
+        });
+    }
+
     public final void reload() {
         try {
             this.config = this.loader.load();
         } catch (IOException ex) {
             throw new RuntimeException("Could not load config.yml, exception occurred (are there syntax errors?)", ex);
         }
-        //this.config.options().copyDefaults(true);
 
-        //VERSION = getInt("config-version", 1);
-        //set("config-version", 1);
+        this.createUpgrader().upgrade(this.config);
 
         this.readConfig(this.configClass, this);
 

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.bukkit.plugin.Plugin;
+import org.spongepowered.configurate.NodePath;
+import org.spongepowered.configurate.transformation.ConfigurationTransformation;
+import org.spongepowered.configurate.transformation.TransformAction;
 import xyz.jpenilla.squaremap.addon.common.config.WorldConfig;
 
 public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.Config<WGConfig, WorldConfig> {
@@ -31,12 +34,12 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
         this.controlShow = this.getBoolean("settings.control.show", this.controlShow);
         this.controlHide = this.getBoolean("settings.control.hide-by-default", this.controlHide);
         this.updateInterval = this.getInt("settings.update-interval", this.updateInterval);
-        this.strokeColor = this.getColor("settings.style.stroke.color", this.strokeColor);
-        this.strokeWeight = this.getInt("settings.style.stroke.weight", this.strokeWeight);
-        this.strokeOpacity = this.getDouble("settings.style.stroke.opacity", this.strokeOpacity);
-        this.fillColor = this.getColor("settings.style.fill.color", this.fillColor);
-        this.fillOpacity = this.getDouble("settings.style.fill.opacity", this.fillOpacity);
-        this.claimTooltip = this.getString("settings.region.tooltip", this.claimTooltip);
+        this.strokeColor = this.getColor("settings.default-style.stroke.color", this.strokeColor);
+        this.strokeWeight = this.getInt("settings.default-style.stroke.weight", this.strokeWeight);
+        this.strokeOpacity = this.getDouble("settings.default-style.stroke.opacity", this.strokeOpacity);
+        this.fillColor = this.getColor("settings.default-style.fill.color", this.fillColor);
+        this.fillOpacity = this.getDouble("settings.default-style.fill.opacity", this.fillOpacity);
+        this.claimTooltip = this.getString("settings.default-style.click-tooltip", this.claimTooltip);
         this.listMode = this.getEnum("settings.regions.list-mode", ListMode.class, this.listMode);
         this.regionList = this.getList(String.class, "settings.regions.list", this.regionList);
         this.flagListMode = this.getEnum("settings.flags.list-mode", ListMode.class, this.flagListMode);
@@ -62,5 +65,16 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
 
     public WGConfig(Plugin plugin) {
         super(WGConfig.class, plugin);
+    }
+
+    @Override
+    protected void addVersions(final ConfigurationTransformation.VersionedBuilder versionedBuilder) {
+        final ConfigurationTransformation zeroToOne = ConfigurationTransformation.builder()
+            .addAction(NodePath.path("settings", "style"), (path, node) -> new Object[]{"settings", "default-style"})
+            .addAction(NodePath.path("settings", "region", "tooltip"), (path, node) -> new Object[]{"settings", "default-style", "click-tooltip"})
+            .addAction(NodePath.path("settings", "region"), TransformAction.remove())
+            .build();
+
+        versionedBuilder.addVersion(1, zeroToOne);
     }
 }
