@@ -23,7 +23,7 @@ public final class WGConfig extends xyz.jpenilla.squaremap.addon.common.config.C
     public ListMode listMode = ListMode.BLACKLIST;
     public List<String> regionList = new ArrayList<>();
     public ListMode flagListMode = ListMode.BLACKLIST;
-    public List<String> flagList = new ArrayList<>();
+    public List<String> flagList = List.of("squaremap-visible");
 
     @SuppressWarnings("unused")
     private void init() {
