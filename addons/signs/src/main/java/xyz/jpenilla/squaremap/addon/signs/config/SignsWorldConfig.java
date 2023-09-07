@@ -9,14 +9,21 @@ public final class SignsWorldConfig extends WorldConfig {
     public int updateInterval = 5;
     public boolean enableControls = true;
     public boolean controlsHiddenByDefault = false;
-    public String tooltip = "<center>{line1}<br/>{line2}<br/>{line3}<br/>{line4}</center>";
+    public String frontAndBackTooltip = "<center>{line1}<br/>{line2}<br/>{line3}<br/>{line4}<br/><br/>" +
+        "Back:<br/>{line1b}<br/>{line2b}<br/>{line3b}<br/>{line4b}</center>";
+    public String frontOnlyTooltip = "<center>{line1}<br/>{line2}<br/>{line3}<br/>{line4}";
+    public String backOnlyTooltip = "<center>Back:<br/>{line1}<br/>{line2}<br/>{line3}<br/>{line4}";
+    public String blankTooltip = "This sign has no text.";
 
     private void worldSettings() {
         this.enabled = this.getBoolean("enabled", this.enabled);
         this.updateInterval = this.getInt("update-interval", this.updateInterval);
         this.enableControls = this.getBoolean("controls.enabled", this.enableControls);
         this.controlsHiddenByDefault = this.getBoolean("controls.hidden-by-default", this.controlsHiddenByDefault);
-        this.tooltip = this.getString("marker.tooltip", this.tooltip);
+        this.frontAndBackTooltip = this.getString("marker.tooltip_both", this.frontAndBackTooltip);
+        this.frontOnlyTooltip = this.getString("marker.tooltip_front_only", this.frontOnlyTooltip);
+        this.backOnlyTooltip = this.getString("marker.tooltip_back_only", this.backOnlyTooltip);
+        this.blankTooltip = this.getString("marker.tooltip_blank", this.blankTooltip);
     }
 
     public String layerLabel = "Signs";

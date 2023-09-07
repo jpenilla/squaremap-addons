@@ -4,14 +4,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.jpenilla.squaremap.addon.signs.config.SignsConfig;
 import xyz.jpenilla.squaremap.addon.signs.data.Icons;
 import xyz.jpenilla.squaremap.addon.signs.data.SignManager;
-import xyz.jpenilla.squaremap.addon.signs.hook.SquaremapHook;
+import xyz.jpenilla.squaremap.addon.signs.hook.LayerProviderManager;
 import xyz.jpenilla.squaremap.addon.signs.listener.SignListener;
 import xyz.jpenilla.squaremap.addon.signs.listener.WorldListener;
-import xyz.jpenilla.squaremap.api.Key;
 
 public final class SignsPlugin extends JavaPlugin {
     private static SignsPlugin instance;
-    private SquaremapHook squaremapHook;
+    private LayerProviderManager layerProviderManager;
     private SignManager signManager;
     private SignsConfig config;
 
@@ -24,11 +23,10 @@ public final class SignsPlugin extends JavaPlugin {
         this.config = new SignsConfig(this);
         this.config.reload();
 
-        @SuppressWarnings("unused")
-        Key staticInit = Icons.OAK;
+        Icons.register(this);
 
-        this.squaremapHook = new SquaremapHook();
-        this.squaremapHook.load();
+        this.layerProviderManager = new LayerProviderManager(this);
+        this.layerProviderManager.load();
 
         this.signManager = new SignManager(this);
         this.signManager.load();
@@ -44,21 +42,23 @@ public final class SignsPlugin extends JavaPlugin {
             this.signManager = null;
         }
 
-        if (this.squaremapHook != null) {
-            this.squaremapHook.disable();
-            this.signManager = null;
+        if (this.layerProviderManager != null) {
+            this.layerProviderManager.disable();
+            this.layerProviderManager = null;
         }
+
+        Icons.unregister();
     }
 
-    public static SignsPlugin getInstance() {
+    public static SignsPlugin instance() {
         return instance;
     }
 
-    public SquaremapHook squaremapHook() {
-        return this.squaremapHook;
+    public LayerProviderManager layerProviders() {
+        return this.layerProviderManager;
     }
 
-    public SignManager getSignManager() {
+    public SignManager signManager() {
         return this.signManager;
     }
 
