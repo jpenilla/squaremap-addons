@@ -64,6 +64,6 @@ public final class LayerProviderManager {
     }
 
     public void disable() {
-        this.providers.forEach((id, provider) -> this.unloadProvider(id));
+        Map.copyOf(this.providers).forEach((id, provider) -> this.unloadProvider(id));
     }
 }
