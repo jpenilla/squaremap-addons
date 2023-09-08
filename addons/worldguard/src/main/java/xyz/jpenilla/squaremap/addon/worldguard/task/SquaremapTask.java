@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import xyz.jpenilla.squaremap.addon.common.config.ListMode;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
+import xyz.jpenilla.squaremap.addon.worldguard.config.StyleSettings;
 import xyz.jpenilla.squaremap.addon.worldguard.config.WGWorldConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.WGHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -91,14 +93,17 @@ public final class SquaremapTask extends BukkitRunnable {
         Map<Flag<?>, Object> flags = region.getFlags();
 
         final WGWorldConfig cfg = this.plugin.config().worldConfig(this.world);
+        final @Nullable StyleSettings override = cfg.styleOverrides.get(region.getId());
+        final StyleSettings style = override == null ? cfg.defaultStyle : override.defaulted(cfg.defaultStyle);
         MarkerOptions.Builder options = MarkerOptions.builder()
-            .strokeColor(cfg.strokeColor)
-            .strokeWeight(cfg.strokeWeight)
-            .strokeOpacity(cfg.strokeOpacity)
-            .fillColor(cfg.fillColor)
-            .fillOpacity(cfg.fillOpacity)
-            .clickTooltip(
-                cfg.claimTooltip
+            .strokeColor(style.stroke.color)
+            .strokeWeight(style.stroke.weight)
+            .strokeOpacity(style.stroke.opacity)
+            .fillColor(style.fill.color)
+            .fillOpacity(style.fill.opacity);
+        if (style.clickTooltip != null && !style.clickTooltip.isBlank()) {
+            options.clickTooltip(
+                style.clickTooltip
                     .replace("{world}", Bukkit.getWorld(BukkitAdapter.namespacedKey(this.world)).getName()) // use names for now
                     .replace("{id}", region.getId())
                     .replace("{owner}", region.getOwners().toPlayersString())
@@ -117,7 +122,7 @@ public final class SquaremapTask extends BukkitRunnable {
                             .collect(Collectors.joining())
                     )
             );
-
+        }
 
         marker.markerOptions(options);
 

@@ -173,6 +173,23 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         return this.config.node(splitPath(path));
     }
 
+    protected final <T> T get(String path, Class<T> type, T def) {
+        return this.get(path, (Type) type, def);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final <T> T get(String path, Type type, T def) {
+        final ConfigurationNode node = this.node(path);
+        try {
+            if (node.virtual()) {
+                node.set(type, def);
+            }
+            return (T) node.get(type, def);
+        } catch (final SerializationException ex) {
+            throw rethrow(ex);
+        }
+    }
+
     protected final <E extends Enum<E>> E getEnum(String path, Class<E> enumClass, E def) {
         try {
             return this.node(path).get(enumClass, def);
