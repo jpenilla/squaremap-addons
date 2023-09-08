@@ -22,6 +22,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.transformation.ConfigurationTransformation;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import xyz.jpenilla.squaremap.addon.common.Util;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.SquaremapProvider;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
@@ -77,7 +78,17 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             throw new RuntimeException("Could not load config.yml, exception occurred (are there syntax errors?)", ex);
         }
 
-        this.createUpgrader().upgrade(this.config);
+        final ConfigUpgrader upgrader = this.createUpgrader();
+        if (!this.config.empty()) {
+            upgrader.upgrade(this.config);
+        } else {
+            final ConfigurationNode versionNode = this.config.node(upgrader.transform().versionKey());
+            try {
+                versionNode.set(upgrader.transform().latestVersion());
+            } catch (final SerializationException ex) {
+                throw Util.rethrow(ex);
+            }
+        }
 
         this.readConfig(this.configClass, this);
 

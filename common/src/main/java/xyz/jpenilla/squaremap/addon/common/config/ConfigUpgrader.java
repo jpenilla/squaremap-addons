@@ -29,6 +29,10 @@ public final class ConfigUpgrader {
         return new UpgradeResult<>(original, newVer, node, original != newVer);
     }
 
+    public ConfigurationTransformation.Versioned transform() {
+        return this.upgrader;
+    }
+
     public record UpgradeResult<N extends ConfigurationNode>(
         int originalVersion,
         int newVersion,
