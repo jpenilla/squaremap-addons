@@ -1,5 +1,6 @@
 package xyz.jpenilla.squaremap.addon.common.config;
 
+import java.awt.Color;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -47,6 +48,20 @@ public abstract class WorldConfig {
             return this.parent.getList(elementType, wrapDefaultPath(path), def);
         }
         return this.parent.getList(elementType, this.wrapPath(path), this.parent.getList(elementType, wrapDefaultPath(path), def));
+    }
+
+    protected final Color getColor(String path, Color def) {
+        if (this.virtual(this.wrapPath(path))) {
+            return this.parent.getColor(wrapDefaultPath(path), def);
+        }
+        return this.parent.getColor(this.wrapPath(path), this.parent.getColor(wrapDefaultPath(path), def));
+    }
+
+    protected final <E extends Enum<E>> E getEnum(String path, Class<E> enumClass, E def) {
+        if (this.virtual(this.wrapPath(path))) {
+            return this.parent.getEnum(wrapDefaultPath(path), enumClass, def);
+        }
+        return this.parent.getEnum(this.wrapPath(path), enumClass, this.parent.getEnum(wrapDefaultPath(path), enumClass, def));
     }
 
     private boolean virtual(String path) {

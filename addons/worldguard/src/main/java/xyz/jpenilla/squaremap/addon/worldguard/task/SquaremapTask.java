@@ -12,8 +12,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import xyz.jpenilla.squaremap.addon.common.config.ListMode;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
-import xyz.jpenilla.squaremap.addon.worldguard.config.WGConfig;
+import xyz.jpenilla.squaremap.addon.worldguard.config.WGWorldConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.WGHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -50,8 +51,9 @@ public final class SquaremapTask extends BukkitRunnable {
         if (regions == null) {
             return;
         }
-        final WGConfig.ListMode listMode = this.plugin.config().listMode;
-        final List<String> list = this.plugin.config().regionList;
+        final WGWorldConfig cfg = this.plugin.config().worldConfig(this.world);
+        final ListMode listMode = cfg.listMode;
+        final List<String> list = cfg.regionList;
         regions.forEach((id, region) -> {
             if (!listMode.allowed(list, id)) {
                 return;
@@ -88,14 +90,15 @@ public final class SquaremapTask extends BukkitRunnable {
         ProfileCache pc = WorldGuard.getInstance().getProfileCache();
         Map<Flag<?>, Object> flags = region.getFlags();
 
+        final WGWorldConfig cfg = this.plugin.config().worldConfig(this.world);
         MarkerOptions.Builder options = MarkerOptions.builder()
-            .strokeColor(this.plugin.config().strokeColor)
-            .strokeWeight(this.plugin.config().strokeWeight)
-            .strokeOpacity(this.plugin.config().strokeOpacity)
-            .fillColor(this.plugin.config().fillColor)
-            .fillOpacity(this.plugin.config().fillOpacity)
+            .strokeColor(cfg.strokeColor)
+            .strokeWeight(cfg.strokeWeight)
+            .strokeOpacity(cfg.strokeOpacity)
+            .fillColor(cfg.fillColor)
+            .fillOpacity(cfg.fillOpacity)
             .clickTooltip(
-                this.plugin.config().claimTooltip
+                cfg.claimTooltip
                     .replace("{world}", Bukkit.getWorld(BukkitAdapter.namespacedKey(this.world)).getName()) // use names for now
                     .replace("{id}", region.getId())
                     .replace("{owner}", region.getOwners().toPlayersString())
@@ -109,7 +112,7 @@ public final class SquaremapTask extends BukkitRunnable {
                     .replace(
                         "{flags}",
                         flags.keySet().stream()
-                            .filter(flag -> this.plugin.config().flagListMode.allowed(this.plugin.config().flagList, flag.getName()))
+                            .filter(flag -> cfg.flagListMode.allowed(cfg.flagList, flag.getName()))
                             .map(flag -> flag.getName() + ": " + flags.get(flag) + "<br/>")
                             .collect(Collectors.joining())
                     )

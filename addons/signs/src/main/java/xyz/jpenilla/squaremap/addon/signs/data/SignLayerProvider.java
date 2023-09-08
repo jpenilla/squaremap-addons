@@ -11,7 +11,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
-import xyz.jpenilla.squaremap.addon.common.config.Util;
+import xyz.jpenilla.squaremap.addon.common.Util;
 import xyz.jpenilla.squaremap.addon.signs.config.SignsWorldConfig;
 import xyz.jpenilla.squaremap.api.LayerProvider;
 import xyz.jpenilla.squaremap.api.marker.Icon;

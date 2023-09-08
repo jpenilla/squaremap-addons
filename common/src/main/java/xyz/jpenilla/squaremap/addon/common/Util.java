@@ -1,4 +1,4 @@
-package xyz.jpenilla.squaremap.addon.common.config;
+package xyz.jpenilla.squaremap.addon.common;
 
 import io.papermc.paper.text.PaperComponents;
 import java.lang.reflect.Method;

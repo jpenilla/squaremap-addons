@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
+import xyz.jpenilla.squaremap.addon.worldguard.config.WGWorldConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.task.SquaremapTask;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
@@ -35,13 +36,14 @@ public final class SquaremapHook {
 
     private void addWorld(final MapWorld world) {
         this.providers.computeIfAbsent(world.identifier(), id -> {
-            SimpleLayerProvider provider = SimpleLayerProvider.builder(plugin.config().controlLabel)
-                .showControls(this.plugin.config().controlShow)
-                .defaultHidden(this.plugin.config().controlHide)
+            final WGWorldConfig cfg = this.plugin.config().worldConfig(id);
+            SimpleLayerProvider provider = SimpleLayerProvider.builder(cfg.controlLabel)
+                .showControls(cfg.controlShow)
+                .defaultHidden(cfg.controlHide)
                 .build();
             world.layerRegistry().register(WORLDGUARD_LAYER_KEY, provider);
             SquaremapTask task = new SquaremapTask(this.plugin, id, provider);
-            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * this.plugin.config().updateInterval);
+            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * cfg.updateInterval);
             return task;
         });
     }

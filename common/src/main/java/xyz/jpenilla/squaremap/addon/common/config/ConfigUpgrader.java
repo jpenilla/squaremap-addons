@@ -6,6 +6,7 @@ import org.checkerframework.framework.qual.DefaultQualifier;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.transformation.ConfigurationTransformation;
+import xyz.jpenilla.squaremap.addon.common.Util;
 
 @DefaultQualifier(NonNull.class)
 public final class ConfigUpgrader {

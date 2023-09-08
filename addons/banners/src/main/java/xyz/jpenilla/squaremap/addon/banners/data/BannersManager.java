@@ -12,7 +12,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.jpenilla.squaremap.addon.banners.SquaremapBanners;
-import xyz.jpenilla.squaremap.addon.common.config.Util;
+import xyz.jpenilla.squaremap.addon.common.Util;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
 
