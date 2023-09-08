@@ -18,7 +18,15 @@ public class WGWorldConfig extends WorldConfig {
     public ListMode listMode = ListMode.BLACKLIST;
     public List<String> regionList = new ArrayList<>();
     public ListMode flagListMode = ListMode.BLACKLIST;
-    public List<String> flagList = List.of("squaremap-visible");
+    public List<String> flagList = List.of(
+        "squaremap-visible",
+        "squaremap-stroke-color",
+        "squaremap-stroke-weight",
+        "squaremap-stroke-opacity",
+        "squaremap-fill-color",
+        "squaremap-fill-opacity",
+        "squaremap-click-tooltip"
+    );
     public Map<String, StyleSettings> styleOverrides = new HashMap<>();
 
     @SuppressWarnings("unused")

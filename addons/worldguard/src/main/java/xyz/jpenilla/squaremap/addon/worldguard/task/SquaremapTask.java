@@ -65,7 +65,7 @@ public final class SquaremapTask extends BukkitRunnable {
     }
 
     private void handleClaim(ProtectedRegion region) {
-        final StateFlag.State state = region.getFlag(this.plugin.visibleFlag());
+        final StateFlag.State state = region.getFlag(this.plugin.visibleFlag);
         if (state == StateFlag.State.DENY) {
             return;
         }
@@ -93,8 +93,9 @@ public final class SquaremapTask extends BukkitRunnable {
         Map<Flag<?>, Object> flags = region.getFlags();
 
         final WGWorldConfig cfg = this.plugin.config().worldConfig(this.world);
+        final StyleSettings defaults = StyleSettings.fromFlags(this.plugin, region).defaulted(cfg.defaultStyle);
         final @Nullable StyleSettings override = cfg.styleOverrides.get(region.getId());
-        final StyleSettings style = override == null ? cfg.defaultStyle : override.defaulted(cfg.defaultStyle);
+        final StyleSettings style = override == null ? defaults : override.defaulted(defaults);
         MarkerOptions.Builder options = MarkerOptions.builder()
             .strokeColor(style.stroke.color)
             .strokeWeight(style.stroke.weight)

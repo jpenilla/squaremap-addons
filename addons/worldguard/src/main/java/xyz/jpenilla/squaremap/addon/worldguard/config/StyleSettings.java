@@ -1,8 +1,15 @@
 package xyz.jpenilla.squaremap.addon.worldguard.config;
 
+import com.sk89q.worldguard.protection.flags.StringFlag;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.awt.Color;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.serialize.SerializationException;
+import xyz.jpenilla.squaremap.addon.common.Util;
+import xyz.jpenilla.squaremap.addon.common.config.ColorSerializer;
+import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
 
 @ConfigSerializable
 public class StyleSettings {
@@ -71,5 +78,32 @@ public class StyleSettings {
             "Owner <span style=\"font-weight:bold;\">{playerowners}</span><br />" +
             "Flags<br /><span style=\"font-weight:bold;\">{flags}</span>";
         return settings;
+    }
+
+    public static StyleSettings fromFlags(final SquaremapWorldGuard plugin, final ProtectedRegion region) {
+        try {
+            final StyleSettings settings = new StyleSettings();
+            final Stroke s = new Stroke();
+            s.color = color(region, plugin.strokeColorFlag);
+            s.weight = region.getFlag(plugin.strokeWeightFlag);
+            s.opacity = region.getFlag(plugin.strokeOpacityFlag);
+            final Fill f = new Fill();
+            f.color = color(region, plugin.fillColorFlag);
+            f.opacity = region.getFlag(plugin.fillOpacityFlag);
+            settings.stroke = s;
+            settings.fill = f;
+            settings.clickTooltip = region.getFlag(plugin.clickTooltipFlag);
+            return settings;
+        } catch (final Exception ex) {
+            throw Util.rethrow(ex);
+        }
+    }
+
+    private static @Nullable Color color(final ProtectedRegion region, final StringFlag flag) throws SerializationException {
+        final @Nullable String data = region.getFlag(flag);
+        if (data == null) {
+            return null;
+        }
+        return ColorSerializer.INSTANCE.deserialize(null, data);
     }
 }

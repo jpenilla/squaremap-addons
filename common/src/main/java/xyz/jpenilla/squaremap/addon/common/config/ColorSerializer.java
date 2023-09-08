@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import org.spongepowered.configurate.serialize.ScalarSerializer;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-final class ColorSerializer extends ScalarSerializer<Color> {
+public final class ColorSerializer extends ScalarSerializer<Color> {
     public static final ColorSerializer INSTANCE = new ColorSerializer();
 
     private ColorSerializer() {
