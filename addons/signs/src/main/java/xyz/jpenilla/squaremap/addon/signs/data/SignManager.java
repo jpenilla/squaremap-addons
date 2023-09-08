@@ -45,28 +45,22 @@ public final class SignManager {
         }
     }
 
-    public void load() {
-        this.migrateData();
+    public void load(final WorldIdentifier id, final SignLayerProvider provider) throws IOException {
+        this.migrateData(id, provider);
 
-        this.plugin.layerProviders().providers().forEach((id, provider) -> {
-            List<SignMarkerData> data = new ArrayList<>();
-            try {
-                Path file = this.dataFile(id);
-                if (Files.isRegularFile(file)) {
-                    try (final Reader r = Files.newBufferedReader(file)) {
-                        data = this.gson.fromJson(r, new TypeToken<List<SignMarkerData>>() {}.getType());
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        List<SignMarkerData> data = new ArrayList<>();
+        Path file = this.dataFile(id);
+        if (Files.isRegularFile(file)) {
+            try (final Reader r = Files.newBufferedReader(file)) {
+                data = this.gson.fromJson(r, new TypeToken<List<SignMarkerData>>() {}.getType());
             }
-            data.forEach(entry -> {
-                try {
-                    provider.add(entry.pos, SignType.typeOrDefault(entry.type), entry.frontLines, entry.backLines);
-                } catch (Exception e) {
-                    this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + id, e);
-                }
-            });
+        }
+        data.forEach(entry -> {
+            try {
+                provider.add(entry.pos, SignType.typeOrDefault(entry.type), entry.frontLines, entry.backLines);
+            } catch (Exception e) {
+                this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + id, e);
+            }
         });
     }
 
@@ -81,23 +75,21 @@ public final class SignManager {
         public @Nullable List<Component> backLines;
     }
 
-    public void save() {
-        this.plugin.layerProviders().providers().forEach((id, provider) -> {
-            final List<SignMarkerData> list = new ArrayList<>();
-            provider.getData().forEach((pos, data) -> {
-                final SignMarkerData s = new SignMarkerData();
-                s.pos = pos;
-                s.type = data.type().name();
-                s.frontLines = data.front();
-                s.backLines = data.back();
-                list.add(s);
-            });
-            try (final Writer w = Files.newBufferedWriter(this.dataFile(id))) {
-                this.gson.toJson(list, new TypeToken<List<SignMarkerData>>() {}.getType(), w);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void save(final WorldIdentifier id, final SignLayerProvider provider) {
+        final List<SignMarkerData> list = new ArrayList<>();
+        provider.getData().forEach((pos, data) -> {
+            final SignMarkerData s = new SignMarkerData();
+            s.pos = pos;
+            s.type = data.type().name();
+            s.frontLines = data.front();
+            s.backLines = data.back();
+            list.add(s);
         });
+        try (final Writer w = Files.newBufferedWriter(this.dataFile(id))) {
+            this.gson.toJson(list, new TypeToken<List<SignMarkerData>>() {}.getType(), w);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeSign(final BlockState state) {
@@ -142,45 +134,39 @@ public final class SignManager {
         });
     }
 
-    private void migrateData() {
-        final boolean[] migrated = new boolean[]{false};
-        this.plugin.layerProviders().providers().forEach((id, provider) -> {
-            final UUID uuid = Bukkit.getWorld(BukkitAdapter.namespacedKey(id)).getUID();
-            final YamlConfiguration config = new YamlConfiguration();
-            File file = new File(this.dataDir, uuid + ".yml");
-            try {
-                if (file.exists()) {
-                    migrated[0] = true;
-                    config.load(file);
-                } else {
-                    return;
-                }
-            } catch (final IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
+    private void migrateData(final WorldIdentifier id, final SignLayerProvider provider) {
+        final UUID uuid = Bukkit.getWorld(BukkitAdapter.namespacedKey(id)).getUID();
+        final YamlConfiguration config = new YamlConfiguration();
+        File file = new File(this.dataDir, uuid + ".yml");
+        try {
+            if (file.exists()) {
+                config.load(file);
+            } else {
+                return;
             }
-            config.getKeys(false).forEach(entry -> {
-                try {
-                    String[] split = entry.split(",");
-                    int x = Integer.parseInt(split[0]);
-                    int y = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    Position pos = Position.of(x, y, z);
-                    List<String> lines = config.getStringList(entry + ".lines");
-                    provider.add(
-                        pos,
-                        SignType.typeOrDefault(config.getString(entry + ".key").replace("sign_", "")),
-                        lines.stream().map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).collect(Collectors.toList()),
-                        List.of(Component.empty(), Component.empty(), Component.empty(), Component.empty())
-                    );
-                } catch (final Exception e) {
-                    this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + uuid, e);
-                }
-            });
-            file.delete();
-        });
-        if (migrated[0]) {
-            this.save();
-            this.plugin.layerProviders().providers().forEach((id, provider) -> provider.clear());
+        } catch (final IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
         }
+        config.getKeys(false).forEach(entry -> {
+            try {
+                String[] split = entry.split(",");
+                int x = Integer.parseInt(split[0]);
+                int y = Integer.parseInt(split[1]);
+                int z = Integer.parseInt(split[2]);
+                Position pos = Position.of(x, y, z);
+                List<String> lines = config.getStringList(entry + ".lines");
+                provider.add(
+                    pos,
+                    SignType.typeOrDefault(config.getString(entry + ".key").replace("sign_", "")),
+                    lines.stream().map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).collect(Collectors.toList()),
+                    List.of(Component.empty(), Component.empty(), Component.empty(), Component.empty())
+                );
+            } catch (final Exception e) {
+                this.plugin.getLogger().log(Level.SEVERE, "Could not load " + entry + " from " + uuid, e);
+            }
+        });
+        this.save(id, provider);
+        provider.clear();
+        file.delete();
     }
 }

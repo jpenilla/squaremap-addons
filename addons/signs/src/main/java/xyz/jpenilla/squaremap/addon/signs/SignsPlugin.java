@@ -26,10 +26,8 @@ public final class SignsPlugin extends JavaPlugin {
         Icons.register(this);
 
         this.layerProviderManager = new LayerProviderManager(this);
-        this.layerProviderManager.load();
-
         this.signManager = new SignManager(this);
-        this.signManager.load();
+        this.layerProviderManager.load();
 
         this.getServer().getPluginManager().registerEvents(new SignListener(this), this);
         this.getServer().getPluginManager().registerEvents(new WorldListener(this), this);
@@ -37,15 +35,11 @@ public final class SignsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.signManager != null) {
-            this.signManager.save();
-            this.signManager = null;
-        }
-
         if (this.layerProviderManager != null) {
             this.layerProviderManager.disable();
             this.layerProviderManager = null;
         }
+        this.signManager = null;
 
         Icons.unregister();
     }

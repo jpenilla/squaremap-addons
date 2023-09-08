@@ -13,23 +13,23 @@ public record WorldListener(SignsPlugin plugin) implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onWorldLoad(WorldLoadEvent event) {
-        plugin.layerProviders().provider(event.getWorld());
+        this.plugin.layerProviders().provider(event.getWorld());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onWorldUnload(WorldUnloadEvent event) {
-        plugin.layerProviders().unloadProvider(event.getWorld());
+        this.plugin.layerProviders().unloadProvider(event.getWorld());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChunkLoad(ChunkLoadEvent event) {
         if (!event.isNewChunk()) {
-            plugin.signManager().checkChunk(event.getChunk());
+            this.plugin.signManager().checkChunk(event.getChunk());
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
-        plugin.signManager().checkChunk(event.getChunk());
+        this.plugin.signManager().checkChunk(event.getChunk());
     }
 }

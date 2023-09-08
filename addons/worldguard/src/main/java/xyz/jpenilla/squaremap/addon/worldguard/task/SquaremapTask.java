@@ -10,26 +10,27 @@ import com.sk89q.worldguard.util.profile.cache.ProfileCache;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
 import xyz.jpenilla.squaremap.addon.worldguard.config.WGConfig;
 import xyz.jpenilla.squaremap.addon.worldguard.hook.WGHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
-import xyz.jpenilla.squaremap.api.MapWorld;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.SimpleLayerProvider;
+import xyz.jpenilla.squaremap.api.WorldIdentifier;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
 public final class SquaremapTask extends BukkitRunnable {
-    private final MapWorld world;
+    private final WorldIdentifier world;
     private final SimpleLayerProvider provider;
     private final SquaremapWorldGuard plugin;
 
     private boolean stop;
 
-    public SquaremapTask(SquaremapWorldGuard plugin, MapWorld world, SimpleLayerProvider provider) {
+    public SquaremapTask(SquaremapWorldGuard plugin, WorldIdentifier world, SimpleLayerProvider provider) {
         this.plugin = plugin;
         this.world = world;
         this.provider = provider;
@@ -45,7 +46,7 @@ public final class SquaremapTask extends BukkitRunnable {
 
     void updateClaims() {
         this.provider.clearMarkers(); // TODO track markers instead of clearing them
-        Map<String, ProtectedRegion> regions = WGHook.getRegions(this.world.identifier());
+        Map<String, ProtectedRegion> regions = WGHook.getRegions(this.world);
         if (regions == null) {
             return;
         }
@@ -95,7 +96,7 @@ public final class SquaremapTask extends BukkitRunnable {
             .fillOpacity(this.plugin.config().fillOpacity)
             .clickTooltip(
                 this.plugin.config().claimTooltip
-                    .replace("{world}", BukkitAdapter.bukkitWorld(this.world).getName()) // use names for now
+                    .replace("{world}", Bukkit.getWorld(BukkitAdapter.namespacedKey(this.world)).getName()) // use names for now
                     .replace("{id}", region.getId())
                     .replace("{owner}", region.getOwners().toPlayersString())
                     .replace("{regionname}", region.getId())

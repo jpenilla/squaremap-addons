@@ -18,6 +18,7 @@ public final class SquaremapWorldGuard extends JavaPlugin {
         this.config.reload();
 
         this.squaremapHook = new SquaremapHook(this);
+        this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
     }
 
     @Override
@@ -44,5 +45,9 @@ public final class SquaremapWorldGuard extends JavaPlugin {
 
     public StateFlag visibleFlag() {
         return this.visibleFlag;
+    }
+
+    public SquaremapHook squaremapHook() {
+        return this.squaremapHook;
     }
 }

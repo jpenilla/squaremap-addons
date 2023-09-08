@@ -29,10 +29,6 @@ public final class LayerProviderManager {
         this.plugin = plugin;
     }
 
-    public Map<WorldIdentifier, SignLayerProvider> providers() {
-        return this.providers;
-    }
-
     public void load() {
         Bukkit.getWorlds().forEach(this::provider);
     }
@@ -48,6 +44,11 @@ public final class LayerProviderManager {
                 return null;
             }
             final SignLayerProvider provider = new SignLayerProvider(worldConfig);
+            try {
+                this.plugin.signManager().load(id, provider);
+            } catch (final Exception e) {
+                this.plugin.getSLF4JLogger().warn("Failed to load data for world {}", id, e);
+            }
             mapWorld.layerRegistry().register(SIGNS_LAYER_KEY, provider);
             return provider;
         });
@@ -58,9 +59,15 @@ public final class LayerProviderManager {
     }
 
     public void unloadProvider(final WorldIdentifier id) {
-        SquaremapProvider.get().getWorldIfEnabled(id)
-            .ifPresent(mapWorld -> mapWorld.layerRegistry().unregister(SIGNS_LAYER_KEY));
-        this.providers.remove(id);
+        SquaremapProvider.get().getWorldIfEnabled(id).ifPresent(mapWorld -> {
+            if (mapWorld.layerRegistry().hasEntry(SIGNS_LAYER_KEY)) {
+                mapWorld.layerRegistry().unregister(SIGNS_LAYER_KEY);
+            }
+        });
+        final @Nullable SignLayerProvider removed = this.providers.remove(id);
+        if (removed != null) {
+            this.plugin.signManager().save(id, removed);
+        }
     }
 
     public void disable() {
