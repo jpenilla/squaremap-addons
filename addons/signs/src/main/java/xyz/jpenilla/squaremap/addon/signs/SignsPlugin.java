@@ -2,6 +2,7 @@ package xyz.jpenilla.squaremap.addon.signs;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.jpenilla.squaremap.addon.signs.config.SignsConfig;
+import xyz.jpenilla.squaremap.addon.signs.data.CustomIcons;
 import xyz.jpenilla.squaremap.addon.signs.data.Icons;
 import xyz.jpenilla.squaremap.addon.signs.data.SignManager;
 import xyz.jpenilla.squaremap.addon.signs.hook.LayerProviderManager;
@@ -13,6 +14,7 @@ public final class SignsPlugin extends JavaPlugin {
     private LayerProviderManager layerProviderManager;
     private SignManager signManager;
     private SignsConfig config;
+    private CustomIcons customIcons;
 
     public SignsPlugin() {
         instance = this;
@@ -24,6 +26,7 @@ public final class SignsPlugin extends JavaPlugin {
         this.config.reload();
 
         Icons.register(this);
+        this.customIcons = CustomIcons.register(this);
 
         this.layerProviderManager = new LayerProviderManager(this);
         this.signManager = new SignManager(this);
@@ -41,6 +44,7 @@ public final class SignsPlugin extends JavaPlugin {
         }
         this.signManager = null;
 
+        this.customIcons.unregister();
         Icons.unregister();
     }
 
@@ -58,5 +62,9 @@ public final class SignsPlugin extends JavaPlugin {
 
     public SignsConfig config() {
         return this.config;
+    }
+
+    public CustomIcons customIcons() {
+        return this.customIcons;
     }
 }
