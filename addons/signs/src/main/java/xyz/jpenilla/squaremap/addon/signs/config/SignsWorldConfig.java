@@ -41,9 +41,13 @@ public final class SignsWorldConfig extends WorldConfig {
     }
 
     public int iconSize = 16;
+    public boolean iconCustom = false;
+    public String iconCustomRegexp = "^!\\[([^\\]]+)\\]$";
 
     private void iconSettings() {
         this.iconSize = getInt("icon.size", this.iconSize);
+        this.iconCustom = this.getBoolean("icon.custom.enabled", this.iconCustom);
+        this.iconCustomRegexp = this.getString("icon.custom.regexp", this.iconCustomRegexp);
     }
 
     private SignsWorldConfig(Config<?, ?> parent, String world) {

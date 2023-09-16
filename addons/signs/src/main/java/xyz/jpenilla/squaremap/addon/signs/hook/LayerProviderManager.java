@@ -43,7 +43,7 @@ public final class LayerProviderManager {
             if (!worldConfig.enabled) {
                 return null;
             }
-            final SignLayerProvider provider = new SignLayerProvider(worldConfig);
+            final SignLayerProvider provider = new SignLayerProvider(worldConfig, this.plugin);
             try {
                 this.plugin.signManager().load(id, provider);
             } catch (final Exception e) {

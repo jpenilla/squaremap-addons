@@ -3,8 +3,11 @@ package xyz.jpenilla.squaremap.addon.signs.data;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -12,7 +15,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import xyz.jpenilla.squaremap.addon.common.Util;
+import xyz.jpenilla.squaremap.addon.signs.SignsPlugin;
 import xyz.jpenilla.squaremap.addon.signs.config.SignsWorldConfig;
+import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.LayerProvider;
 import xyz.jpenilla.squaremap.api.marker.Icon;
 import xyz.jpenilla.squaremap.api.marker.Marker;
@@ -22,9 +27,20 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 public final class SignLayerProvider implements LayerProvider {
     private final Map<Position, Data> data = new ConcurrentHashMap<>();
     private final SignsWorldConfig worldConfig;
+    private final SignsPlugin plugin;
+    private final @Nullable Pattern customIconPattern;
 
-    public SignLayerProvider(final SignsWorldConfig worldConfig) {
+    public SignLayerProvider(final SignsWorldConfig worldConfig, final SignsPlugin plugin) {
         this.worldConfig = worldConfig;
+        this.plugin = plugin;
+        if (this.worldConfig.iconCustom) {
+            this.customIconPattern = this.compileCustomIconPattern();
+            if (this.plugin.customIcons().isEmpty()) {
+                this.plugin.getSLF4JLogger().warn("custom icons were requested but no image files were found in customicons/");
+            }
+        } else {
+            this.customIconPattern = null;
+        }
     }
 
     @Override
@@ -81,7 +97,8 @@ public final class SignLayerProvider implements LayerProvider {
         @Nullable List<Component> front,
         @Nullable List<Component> back
     ) {
-        Icon icon = Marker.icon(position.point(), signType.iconKey, worldConfig.iconSize);
+        final Key iconKey = this.tryExtractCustomIcon(front).orElse(signType.iconKey);
+        Icon icon = Marker.icon(position.point(), iconKey, worldConfig.iconSize);
         front = front == null || isBlank(front) ? null : front;
         back = back == null || isBlank(back) ? null : back;
         icon.markerOptions(MarkerOptions.builder().hoverTooltip(this.renderHoverTooltip(front, back)));
@@ -134,5 +151,34 @@ public final class SignLayerProvider implements LayerProvider {
 
     public void remove(Position position) {
         this.data.remove(position);
+    }
+
+    private final Optional<Key> tryExtractCustomIcon(final @Nullable List<Component> front) {
+        if (this.customIconPattern == null || front == null || front.get(0) == null) {
+            return Optional.empty();
+        }
+
+        try {
+            final String firstLine = PlainTextComponentSerializer.plainText().serialize(front.get(0));
+            final Matcher match = this.customIconPattern.matcher(firstLine);
+            if (match != null && match.matches()) {
+                // get last regexp capture group
+                final String matchText = match.group(match.groupCount());
+                return this.plugin.customIcons().lookup(matchText);
+            }
+        } catch (final Exception e) {
+        }
+
+        return Optional.empty();
+    }
+
+    private final @Nullable Pattern compileCustomIconPattern() {
+        try {
+            return Pattern.compile(worldConfig.iconCustomRegexp);
+        } catch (final Exception e) {
+            this.plugin.getSLF4JLogger().warn("invalid regexp in \"icon.custom.regexp\", custom icons disabled: {}",
+                    e.getLocalizedMessage());
+        }
+        return null;
     }
 }
