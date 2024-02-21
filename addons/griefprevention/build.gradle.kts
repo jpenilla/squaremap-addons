@@ -1,7 +1,7 @@
 description = "GriefPrevention integration for squaremap"
 
 dependencies {
-    compileOnly("com.github.TechFortress:GriefPrevention:16.18")
+    compileOnly("com.github.TechFortress:GriefPrevention:16.18.2")
 }
 
 bukkit {
