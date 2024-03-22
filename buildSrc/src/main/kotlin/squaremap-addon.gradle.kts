@@ -1,6 +1,8 @@
+import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYml
+
 plugins {
     id("base-conventions")
-    id("net.minecrell.plugin-yml.bukkit")
+    id("xyz.jpenilla.resource-factory")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -41,8 +43,14 @@ tasks {
     }
 }
 
-bukkit {
+val bukkitPluginYml = bukkitPluginYml {
     apiVersion = "1.18"
-    addDepend("squaremap")
-    addAuthor("jmp")
+    depend.add("squaremap")
+    authors.add("jmp")
 }
+
+sourceSets.main {
+    resourceFactory.factory(bukkitPluginYml.resourceFactory())
+}
+
+extensions.add("bukkit", bukkitPluginYml)

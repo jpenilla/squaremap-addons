@@ -8,6 +8,6 @@ dependencies {
 
 bukkit {
     main = "xyz.jpenilla.squaremap.addon.claimchunk.SquaremapClaimChunk"
-    addAuthor("BillyGalbreath")
-    addDepend("ClaimChunk")
+    authors.add("BillyGalbreath")
+    depend.add("ClaimChunk")
 }

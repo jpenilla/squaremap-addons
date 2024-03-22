@@ -9,6 +9,6 @@ dependencies {
 
 bukkit {
     main = "xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard"
-    addAuthor("BillyGalbreath")
-    addDepend("WorldGuard")
+    authors.add("BillyGalbreath")
+    depend.add("WorldGuard")
 }

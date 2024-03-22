@@ -1,14 +1,15 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import xyz.jpenilla.resourcefactory.bukkit.Permission
 
 description = "Signs addon for squaremap"
 
 bukkit {
     main = "xyz.jpenilla.squaremap.addon.signs.SignsPlugin"
-    addAuthor("BillyGalbreath")
+    authors.add("BillyGalbreath")
+
     permissions {
         register("squaremap.signs.admin") {
             description = "Allow controlling the plugin"
-            default = BukkitPluginDescription.Permission.Default.OP
+            default = Permission.Default.OP
         }
     }
 }

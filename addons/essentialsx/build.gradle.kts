@@ -8,6 +8,6 @@ dependencies {
 
 bukkit {
     main = "xyz.jpenilla.squaremap.addon.essentialsx.SquaremapEssentials"
-    addAuthor("BillyGalbreath")
-    addDepend("Essentials")
+    authors.add("BillyGalbreath")
+    depend.add("Essentials")
 }

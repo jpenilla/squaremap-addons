@@ -1,16 +1,16 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import xyz.jpenilla.resourcefactory.bukkit.Permission
 
 description = "Banners addon for squaremap"
 
 bukkit {
     main = "xyz.jpenilla.squaremap.addon.banners.SquaremapBanners"
-    addAuthor("BillyGalbreath")
-    addAuthor("granny")
+    authors.add("BillyGalbreath")
+    authors.add("granny")
 
     permissions {
         register("squaremap.banners.admin") {
             description = "Allow controlling the plugin"
-            default = BukkitPluginDescription.Permission.Default.OP
+            default = Permission.Default.OP
         }
     }
 }
