@@ -6,7 +6,7 @@ dependencies {
     }
 }
 
-bukkit {
+bukkitPluginYml {
     main = "xyz.jpenilla.squaremap.addon.claimchunk.SquaremapClaimChunk"
     authors.add("BillyGalbreath")
     depend.add("ClaimChunk")

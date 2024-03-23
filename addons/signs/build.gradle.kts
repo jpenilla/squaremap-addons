@@ -2,7 +2,7 @@ import xyz.jpenilla.resourcefactory.bukkit.Permission
 
 description = "Signs addon for squaremap"
 
-bukkit {
+bukkitPluginYml {
     main = "xyz.jpenilla.squaremap.addon.signs.SignsPlugin"
     authors.add("BillyGalbreath")
 

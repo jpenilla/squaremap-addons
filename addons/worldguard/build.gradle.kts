@@ -7,7 +7,7 @@ dependencies {
     }
 }
 
-bukkit {
+bukkitPluginYml {
     main = "xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard"
     authors.add("BillyGalbreath")
     depend.add("WorldGuard")

@@ -2,7 +2,7 @@ import xyz.jpenilla.resourcefactory.bukkit.Permission
 
 description = "Banners addon for squaremap"
 
-bukkit {
+bukkitPluginYml {
     main = "xyz.jpenilla.squaremap.addon.banners.SquaremapBanners"
     authors.add("BillyGalbreath")
     authors.add("granny")
