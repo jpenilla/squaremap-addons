@@ -8,6 +8,6 @@ repositories {
 
 dependencies {
     implementation("net.kyori", "indra-common", "3.1.3")
-    implementation("xyz.jpenilla:resource-factory:0.0.7")
+    implementation("xyz.jpenilla:resource-factory:0.0.8")
     implementation("com.github.johnrengelman:shadow:8.1.1")
 }

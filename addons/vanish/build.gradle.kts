@@ -6,7 +6,7 @@ dependencies {
     }
 }
 
-bukkitPluginYml {
+bukkitPluginYaml {
     main = "xyz.jpenilla.squaremap.addon.vanish.SquaremapVanish"
     softDepend = listOf("SuperVanish", "PremiumVanish")
 }

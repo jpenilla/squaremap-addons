@@ -6,7 +6,7 @@ dependencies {
     }
 }
 
-bukkitPluginYml {
+bukkitPluginYaml {
     main = "xyz.jpenilla.squaremap.addon.essentialsx.SquaremapEssentials"
     authors.add("BillyGalbreath")
     depend.add("Essentials")

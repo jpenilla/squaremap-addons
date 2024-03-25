@@ -1,6 +1,6 @@
 description = "Mobs addon for squaremap"
 
-bukkitPluginYml {
+bukkitPluginYaml {
     main = "xyz.jpenilla.squaremap.addon.mobs.SquaremapMobs"
     authors.add("BillyGalbreath")
 }
