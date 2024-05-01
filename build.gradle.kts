@@ -1,6 +1,6 @@
 plugins {
     base
-    id("xyz.jpenilla.run-paper") version "2.2.4"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 allprojects {
