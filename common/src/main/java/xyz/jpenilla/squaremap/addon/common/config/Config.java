@@ -74,6 +74,8 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
         final PaperCommandManager<CommandSender> manager =
             PaperCommandManager.createNative(this.plugin, ExecutionCoordinator.simpleCoordinator());
 
+        manager.registerBrigadier();
+
         manager.command(
             manager.commandBuilder(this.plugin.getName().toLowerCase(Locale.ROOT))
                 .literal("reload")
