@@ -27,7 +27,15 @@ public final class SquaremapWorldGuard extends JavaPlugin {
         this.config = new WGConfig(this);
         this.config.reload();
 
-        this.squaremapHook = new SquaremapHook(this);
+        final Runnable load = () -> {
+            this.squaremapHook = new SquaremapHook(this);
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
+
         this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
     }
 

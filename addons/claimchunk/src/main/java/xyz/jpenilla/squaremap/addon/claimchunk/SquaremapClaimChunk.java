@@ -13,7 +13,16 @@ public final class SquaremapClaimChunk extends JavaPlugin {
         this.config = new ClaimChunkConfig(this);
         this.config.reload();
 
-        this.squaremapHook = new SquaremapHook(this);
+        final Runnable load = () -> {
+            this.squaremapHook = new SquaremapHook(this);
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
+
+        load.run();
     }
 
     @Override

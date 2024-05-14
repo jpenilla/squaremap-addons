@@ -53,6 +53,11 @@ public final class SquaremapHook {
 
     public void disable() {
         this.tasks.values().forEach(SquaremapTask::disable);
+        SquaremapProvider.get().mapWorlds().forEach(w -> {
+            if (w.layerRegistry().hasEntry(DEATH_SPOTS_LAYER_KEY)) {
+                w.layerRegistry().unregister(DEATH_SPOTS_LAYER_KEY);
+            }
+        });
         this.tasks.clear();
     }
 }
