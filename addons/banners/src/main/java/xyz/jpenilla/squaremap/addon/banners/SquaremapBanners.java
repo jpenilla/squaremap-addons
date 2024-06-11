@@ -24,14 +24,23 @@ public final class SquaremapBanners extends JavaPlugin {
         this.config = new BannersConfig(this);
         this.config.reload();
 
+        final Runnable load = () -> {
+            this.squaremapHook = new SquaremapHook();
+            this.squaremapHook.load();
+
+            this.bannerManager = new BannersManager(this);
+            this.bannerManager.load();
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
+
         //noinspection unused
         Key loadme = Icons.WHITE;
 
-        squaremapHook = new SquaremapHook();
-        squaremapHook.load();
-
-        bannerManager = new BannersManager(this);
-        bannerManager.load();
+        load.run();
 
         getServer().getPluginManager().registerEvents(new BannersListener(this), this);
         getServer().getPluginManager().registerEvents(new WorldListener(this), this);

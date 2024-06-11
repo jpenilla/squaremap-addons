@@ -25,12 +25,21 @@ public final class SignsPlugin extends JavaPlugin {
         this.config = new SignsConfig(this);
         this.config.reload();
 
-        Icons.register(this);
-        this.customIcons = CustomIcons.register(this);
+        final Runnable load = () -> {
+            Icons.register(this);
+            this.customIcons = CustomIcons.register(this);
 
-        this.layerProviderManager = new LayerProviderManager(this);
-        this.signManager = new SignManager(this);
-        this.layerProviderManager.load();
+            this.layerProviderManager = new LayerProviderManager(this);
+            this.signManager = new SignManager(this);
+            this.layerProviderManager.load();
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
+
+        load.run();
 
         this.getServer().getPluginManager().registerEvents(new SignListener(this), this);
         this.getServer().getPluginManager().registerEvents(new WorldListener(this), this);

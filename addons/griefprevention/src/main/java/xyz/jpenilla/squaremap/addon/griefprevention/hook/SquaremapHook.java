@@ -40,6 +40,11 @@ public final class SquaremapHook {
 
     public void disable() {
         this.tasks.values().forEach(SquaremapTask::disable);
+        SquaremapProvider.get().mapWorlds().forEach(w -> {
+            if (w.layerRegistry().hasEntry(GP_LAYER_KEY)) {
+                w.layerRegistry().unregister(GP_LAYER_KEY);
+            }
+        });
         this.tasks.clear();
     }
 }
