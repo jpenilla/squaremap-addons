@@ -60,7 +60,7 @@ public final class SquaremapTask extends BukkitRunnable {
             return;
         }
         final List<DataChunk> dataChunks = Arrays.stream(dataChunksArr)
-            .filter(claim -> claim.chunk.getWorld().equals(this.bukkitWorld.getName()))
+            .filter(claim -> claim.chunk.world().equals(this.bukkitWorld.getName()))
             .toList();
 
         // show simple markers (marker per chunk)
@@ -72,8 +72,8 @@ public final class SquaremapTask extends BukkitRunnable {
         // show combined chunks into polygons
         final List<Claim> claims = dataChunks.stream()
             .map(dataChunk -> new Claim(
-                dataChunk.chunk.getX(),
-                dataChunk.chunk.getZ(),
+                dataChunk.chunk.x(),
+                dataChunk.chunk.z(),
                 dataChunk.player
             ))
             .toList();
@@ -140,10 +140,10 @@ public final class SquaremapTask extends BukkitRunnable {
     }
 
     private void drawChunk(DataChunk claim) {
-        int minX = claim.chunk.getX() << 4;
-        int maxX = (claim.chunk.getX() + 1) << 4;
-        int minZ = claim.chunk.getZ() << 4;
-        int maxZ = (claim.chunk.getZ() + 1) << 4;
+        int minX = claim.chunk.x() << 4;
+        int maxX = (claim.chunk.x() + 1) << 4;
+        int minZ = claim.chunk.z() << 4;
+        int maxZ = (claim.chunk.z() + 1) << 4;
 
         final Rectangle rect = Marker.rectangle(Point.of(minX, minZ), Point.of(maxX, maxZ));
         final MarkerOptions.Builder options = options(claim.player);

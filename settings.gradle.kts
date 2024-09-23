@@ -24,6 +24,11 @@ dependencyResolutionManagement {
                 includeGroupByRegex("com\\.github\\..*")
             }
         }
+        modrinthMavenWorkaround(
+            "claimchunk",
+            "0.0.25-FIX3",
+            "claimchunk-0.0.25-FIX3-plugin.jar"
+        )
     }
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 }
@@ -52,5 +57,17 @@ fun includeAddon(addonName: String) {
     include(name)
     project(":$name").apply {
         projectDir = file("addons/$addonName")
+    }
+}
+
+// https://github.com/modrinth/code/issues/2428
+fun RepositoryHandler.modrinthMavenWorkaround(nameOrId: String, version: String, fileName: String) {
+    val url = "https://api.modrinth.com/maven/maven/modrinth/$nameOrId/$version/$fileName"
+    val group = "maven.modrinth.workaround"
+    ivy(url.substringBeforeLast('/')) {
+        name = "Modrinth Maven Workaround for $nameOrId"
+        patternLayout { artifact(url.substringAfterLast('/')) }
+        metadataSources { artifact() }
+        content { includeModule(group, nameOrId) }
     }
 }
