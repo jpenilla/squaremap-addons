@@ -18,6 +18,7 @@ import xyz.jpenilla.squaremap.api.WorldIdentifier;
 import static xyz.jpenilla.squaremap.api.Key.key;
 
 public final class SquaremapHook {
+    public static final Key WARP_LAYER_KEY = key("essentials_warps");
     public static final Key WARP_ICON_KEY = key("essentials_warp_icon");
 
     private final Map<WorldIdentifier, SquaremapTask> tasks = new HashMap<>();
@@ -45,7 +46,7 @@ public final class SquaremapHook {
                 .showControls(worldConfig.warpsShowControls)
                 .defaultHidden(worldConfig.warpsControlsHidden)
                 .build();
-            mapWorld.layerRegistry().register(Key.of("essentials_warps"), provider);
+            mapWorld.layerRegistry().register(WARP_LAYER_KEY, provider);
             SquaremapTask task = new SquaremapTask(mapWorld, worldConfig, provider);
             task.runTaskTimerAsynchronously(this.plugin, 0, 20L * this.plugin.config().updateInterval);
             this.tasks.put(mapWorld.identifier(), task);
@@ -54,6 +55,11 @@ public final class SquaremapHook {
 
     public void disable() {
         this.tasks.values().forEach(SquaremapTask::disable);
+        SquaremapProvider.get().mapWorlds().forEach(w -> {
+            if (w.layerRegistry().hasEntry(WARP_LAYER_KEY)) {
+                w.layerRegistry().unregister(WARP_LAYER_KEY);
+            }
+        });
         this.tasks.clear();
     }
 }

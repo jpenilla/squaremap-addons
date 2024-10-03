@@ -11,12 +11,19 @@ import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.cloud.bukkit.BukkitCommandMeta;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.PaperCommandManager;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.transformation.ConfigurationTransformation;
@@ -28,6 +35,7 @@ import xyz.jpenilla.squaremap.api.SquaremapProvider;
 import xyz.jpenilla.squaremap.api.WorldIdentifier;
 
 import static java.util.Objects.requireNonNull;
+import static org.incendo.cloud.description.Description.description;
 
 @SuppressWarnings("unused")
 public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
@@ -38,6 +46,7 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
     private final YamlConfigurationLoader loader;
     private final @Nullable Class<W> worldConfigClass;
     private final @Nullable Map<WorldIdentifier, W> worldConfigs;
+    private final Plugin plugin;
     ConfigurationNode config;
 
     protected Config(final Class<C> configClass, final Plugin plugin) {
@@ -58,6 +67,33 @@ public abstract class Config<C extends Config<C, W>, W extends WorldConfig> {
             .nodeStyle(NodeStyle.BLOCK)
             .defaultOptions(options -> options.serializers(builder -> builder.register(ColorSerializer.INSTANCE)))
             .build();
+        this.plugin = plugin;
+    }
+
+    public void registerReloadCommand(final Runnable callback) {
+        final PaperCommandManager<CommandSender> manager =
+            PaperCommandManager.createNative(this.plugin, ExecutionCoordinator.simpleCoordinator());
+
+        manager.registerBrigadier();
+
+        manager.command(
+            manager.commandBuilder(this.plugin.getName().toLowerCase(Locale.ROOT))
+                .literal("reload")
+                .permission(this.plugin.getName().toLowerCase(Locale.ROOT) + ".command.reload")
+                .meta(BukkitCommandMeta.BUKKIT_DESCRIPTION, this.plugin.getName() + " commands.")
+                .commandDescription(description("Reloads the " + this.plugin.getName() + " config."))
+                .handler(ctx -> {
+                    ctx.sender().sendMessage(Component.text("Reloading " + this.plugin.getName() + "...", NamedTextColor.GREEN));
+                    try {
+                        this.reload();
+                        callback.run();
+                    } catch (final Exception e) {
+                        ctx.sender().sendMessage(Component.text("Failed to reload. Check console for errors.", NamedTextColor.RED));
+                        this.plugin.getSLF4JLogger().error("Failed to reload", e);
+                    }
+                    ctx.sender().sendMessage(Component.text("Done reloading " + this.plugin.getName() + ".", NamedTextColor.GREEN));
+                })
+        );
     }
 
     protected void addVersions(final ConfigurationTransformation.VersionedBuilder versionedBuilder) {

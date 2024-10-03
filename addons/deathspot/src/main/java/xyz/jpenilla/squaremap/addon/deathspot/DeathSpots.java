@@ -26,13 +26,21 @@ public final class DeathSpots extends JavaPlugin {
         this.config = new DeathSpotConfig(this);
         this.config.reload();
 
-        if (!new File(this.getDataFolder(), "icon.png").exists()) {
-            this.saveResource("icon.png", false);
-        }
+        final Runnable load = () -> {
+            if (!new File(this.getDataFolder(), "icon.png").exists()) {
+                this.saveResource("icon.png", false);
+            }
+            this.squaremapHook = new SquaremapHook(this);
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
-        this.squaremapHook = new SquaremapHook(this);
+        load.run();
     }
 
     @Override

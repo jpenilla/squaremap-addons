@@ -35,6 +35,11 @@ public final class SquaremapHook {
 
     public void disable() {
         this.tasks.values().forEach(SquaremapTask::disable);
+        SquaremapProvider.get().mapWorlds().forEach(w -> {
+            if (w.layerRegistry().hasEntry(CLAIM_CHUNK_LAYER_KEY)) {
+                w.layerRegistry().unregister(CLAIM_CHUNK_LAYER_KEY);
+            }
+        });
         this.tasks.clear();
     }
 }

@@ -19,12 +19,21 @@ public final class SquaremapEssentials extends JavaPlugin {
         this.config = new EssXConfig(this);
         this.config.reload();
 
-        if (!new File(this.getDataFolder(), "warp.png").exists()) {
-            this.saveResource("warp.png", false);
-        }
+        final Runnable load = () -> {
+            if (!new File(this.getDataFolder(), "warp.png").exists()) {
+                this.saveResource("warp.png", false);
+            }
 
-        this.squaremapHook = new SquaremapHook(this);
-        this.squaremapHook.load();
+            this.squaremapHook = new SquaremapHook(this);
+            this.squaremapHook.load();
+        };
+
+        this.config.registerReloadCommand(() -> {
+            this.onDisable();
+            load.run();
+        });
+
+        load.run();
 
         this.getServer().getPluginManager().registerEvents(new EssentialsListener(this), this);
     }
