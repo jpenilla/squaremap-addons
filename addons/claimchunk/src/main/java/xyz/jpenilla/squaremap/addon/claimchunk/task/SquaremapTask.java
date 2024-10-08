@@ -1,6 +1,8 @@
 package xyz.jpenilla.squaremap.addon.claimchunk.task;
 
+import com.cjburkey.claimchunk.ClaimChunk;
 import com.cjburkey.claimchunk.chunk.DataChunk;
+import com.cjburkey.claimchunk.player.PlayerHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -154,8 +156,16 @@ public final class SquaremapTask extends BukkitRunnable {
     }
 
     private MarkerOptions.Builder options(UUID owner) {
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(owner);
-        final String ownerName = player.getName() == null ? "unknown" : player.getName();
+        final PlayerHandler playerHandler = ClaimChunk.getInstance().getPlayerHandler();
+        String playerName = playerHandler.getUsername(owner);
+        if (playerName == null) {
+            final OfflinePlayer player = Bukkit.getOfflinePlayer(owner);
+            playerName = player.getName() == null ? "unknown" : player.getName();
+        }
+        String chunkName = playerHandler.getChunkName(owner);
+        if (chunkName == null) {
+            chunkName = playerName;
+        }
         return MarkerOptions.builder()
             .strokeColor(this.plugin.config().strokeColor)
             .strokeWeight(this.plugin.config().strokeWeight)
@@ -165,7 +175,8 @@ public final class SquaremapTask extends BukkitRunnable {
             .clickTooltip(
                 this.plugin.config().claimTooltip
                     .replace("{world}", this.bukkitWorld.getName())
-                    .replace("{owner}", ownerName)
+                    .replace("{owner}", playerName)
+                    .replace("{name}", chunkName)
             );
     }
 
