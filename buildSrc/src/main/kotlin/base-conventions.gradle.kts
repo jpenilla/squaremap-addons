@@ -7,3 +7,13 @@ indra {
         target(17)
     }
 }
+
+tasks {
+    jar {
+        manifest {
+            attributes(
+                "paperweight-mappings-namespace" to "mojang"
+            )
+        }
+    }
+}
