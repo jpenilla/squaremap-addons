@@ -5,6 +5,7 @@ import com.cjburkey.claimchunk.chunk.DataChunk;
 import com.cjburkey.claimchunk.player.PlayerHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +91,7 @@ public final class SquaremapTask extends BukkitRunnable {
         // break groups down by owner
         Map<UUID, List<Claim>> byOwner = new HashMap<>();
         for (Claim claim : claims) {
-            List<Claim> list = byOwner.getOrDefault(claim.owner(), new ArrayList<>());
-            list.add(claim);
-            byOwner.put(claim.owner(), list);
+            byOwner.computeIfAbsent(claim.owner(), $ -> new ArrayList<>()).add(claim);
         }
 
         // combine touching claims
@@ -100,6 +99,7 @@ public final class SquaremapTask extends BukkitRunnable {
         for (Map.Entry<UUID, List<Claim>> entry : byOwner.entrySet()) {
             UUID owner = entry.getKey();
             List<Claim> list = entry.getValue();
+            list.sort(Comparator.comparing(Claim::x).thenComparing(Claim::z));
             next1:
             for (Claim claim : list) {
                 List<Group> groupList = groups.getOrDefault(owner, new ArrayList<>());

@@ -15,8 +15,8 @@ public final class ClaimChunkConfig extends Config<ClaimChunkConfig, WorldConfig
     public double strokeOpacity = 0.75D;
     public Color fillColor = Color.RED;
     public double fillOpacity = 0.2D;
-    public String claimTooltip = "{owner}";
-    public boolean showChunks = true;
+    public String claimTooltip = "{name}";
+    public boolean showChunks = false;
 
     @SuppressWarnings("unused")
     private void init() {

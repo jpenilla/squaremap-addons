@@ -17,7 +17,7 @@ import xyz.jpenilla.squaremap.api.marker.Polygon;
 public final class RectangleMerge {
 
     public static Polygon getPoly(List<Claim> claims) {
-        List<Point> combined = new ArrayList<>();
+        List<Shape> shapes = new ArrayList<>();
         for (Claim claim : claims) {
             int x = claim.x() << 4;
             int z = claim.z() << 4;
@@ -27,19 +27,23 @@ public final class RectangleMerge {
                 Point.of(x + 16, z + 16),
                 Point.of(x + 16, z)
             );
-            if (combined.isEmpty()) {
-                combined = points;
+            shapes.add(toShape(points));
+        }
+
+        Area area = null;
+        for (Shape shape : shapes) {
+            if (area == null) {
+                area = new Area(shape);
             } else {
-                combined = merge(combined, points);
+                area.add(new Area(shape));
             }
         }
-        return Marker.polygon(combined);
-    }
 
-    private static List<Point> merge(List<Point> p1, List<Point> p2) {
-        Area area = new Area(toShape(p1));
-        area.add(new Area(toShape(p2)));
-        return toPoints(area);
+        if (area == null) {
+            throw new IllegalStateException();
+        }
+
+        return toMarker(area);
     }
 
     private static Shape toShape(List<Point> points) {
@@ -56,18 +60,26 @@ public final class RectangleMerge {
         return path;
     }
 
-    private static List<Point> toPoints(Shape shape) {
-        List<Point> result = new ArrayList<>();
+    private static Polygon toMarker(Shape shape) {
+        List<Point> main = new ArrayList<>();
+        List<List<Point>> subtract = new ArrayList<>();
         PathIterator iter = shape.getPathIterator(null, 0.0);
         double[] coords = new double[6];
+        List<Point> current = main;
         while (!iter.isDone()) {
             int segment = iter.currentSegment(coords);
             switch (segment) {
-                case PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> result.add(Point.of(coords[0], coords[1]));
+                case PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> current.add(Point.of(coords[0], coords[1]));
+                case PathIterator.SEG_CLOSE -> {
+                    List<Point> newList = new ArrayList<>();
+                    subtract.add(newList);
+                    current = newList;
+                }
             }
             iter.next();
         }
-        return result;
+        subtract.removeIf(List::isEmpty);
+        return Marker.polygon(main, subtract);
     }
 
 }
