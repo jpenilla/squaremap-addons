@@ -3,6 +3,7 @@ package xyz.jpenilla.squaremap.addon.worldguard.config;
 import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import java.awt.Color;
+import java.lang.reflect.Type;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -104,6 +105,7 @@ public class StyleSettings {
         if (data == null) {
             return null;
         }
-        return ColorSerializer.INSTANCE.deserialize(null, data);
+        //noinspection DataFlowIssue
+        return ColorSerializer.INSTANCE.deserialize((Type) null, data);
     }
 }
