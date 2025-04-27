@@ -1,7 +1,7 @@
 plugins {
     id("base-conventions")
     id("xyz.jpenilla.resource-factory-bukkit-convention")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 dependencies {
