@@ -33,6 +33,7 @@ tasks {
         )
         reloc("io.leangen.geantyref")
         reloc("org.spongepowered.configurate")
+        reloc("net.kyori.option")
         reloc("org.yaml.snakeyaml")
     }
 
