@@ -47,7 +47,8 @@ public final class SquaremapTask extends BukkitRunnable {
         this.provider.clearMarkers(); // TODO track markers instead of clearing them
         Collection<Claim> topLevelClaims = GPHook.getClaims();
         if (topLevelClaims != null) {
-            topLevelClaims.stream()
+            List<Claim> snapshot = new ArrayList<>(topLevelClaims);
+            snapshot.stream()
                 .filter(claim -> claim.getGreaterBoundaryCorner().getWorld().getUID().equals(this.bukkitWorld.getUID()))
                 .filter(claim -> claim.parent == null)
                 .forEach(this::handleClaim);
