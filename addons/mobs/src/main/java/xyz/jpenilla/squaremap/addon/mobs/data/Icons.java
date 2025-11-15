@@ -15,14 +15,19 @@ import xyz.jpenilla.squaremap.api.SquaremapProvider;
 public final class Icons {
     public static final Map<EntityType, Key> BY_TYPE = new HashMap<>();
 
+    public static final Key ALLAY = register("allay");
+    public static final Key ARMADILLO = register("armadillo");
     public static final Key BAT = register("bat");
     public static final Key BEE = register("bee");
     public static final Key BLAZE = register("blaze");
+    public static final Key BREEZE = register("breeze");
+    public static final Key CAMEL = register("camel");
     public static final Key CAT = register("cat");
     public static final Key CAVE_SPIDER = register("cave_spider");
     public static final Key CHICKEN = register("chicken");
     public static final Key COD = register("cod");
     public static final Key COW = register("cow");
+    public static final Key CREAKING = register("creaking");
     public static final Key CREEPER = register("creeper");
     public static final Key DOLPHIN = register("dolphin");
     public static final Key DONKEY = register("donkey");
@@ -33,9 +38,12 @@ public final class Icons {
     public static final Key ENDERMITE = register("endermite");
     public static final Key EVOKER = register("evoker");
     public static final Key FOX = register("fox");
+    public static final Key FROG = register("frog");
     public static final Key GHAST = register("ghast");
     public static final Key GIANT = register("giant");
+    public static final Key GOAT = register("goat");
     public static final Key GUARDIAN = register("guardian");
+    public static final Key HAPPY_GHAST = register("happy_ghast");
     public static final Key HOGLIN = register("hoglin");
     public static final Key HORSE = register("horse");
     public static final Key HUSK = register("husk");
@@ -65,11 +73,13 @@ public final class Icons {
     public static final Key SKELETON = register("skeleton");
     public static final Key SKELETON_HORSE = register("skeleton_horse");
     public static final Key SLIME = register("slime");
+    public static final Key SNIFFER = register("sniffer");
     public static final Key SNOW_GOLEM = register("snow_golem");
     public static final Key SPIDER = register("spider");
     public static final Key SQUID = register("squid");
     public static final Key STRAY = register("stray");
     public static final Key STRIDER = register("strider");
+    public static final Key TADPOLE = register("tadpole");
     public static final Key TRADER_LLAMA = register("trader_llama");
     public static final Key TROPICAL_FISH = register("tropical_fish");
     public static final Key TURTLE = register("turtle");
@@ -77,6 +87,7 @@ public final class Icons {
     public static final Key VILLAGER = register("villager");
     public static final Key VINDICATOR = register("vindicator");
     public static final Key WANDERING_TRADER = register("wandering_trader");
+    public static final Key WARDEN = register("warden");
     public static final Key WITCH = register("witch");
     public static final Key WITHER = register("wither");
     public static final Key WITHER_SKELETON = register("wither_skeleton");
