@@ -121,7 +121,7 @@ public final class Icons {
 
             BY_TYPE.put(type, key);
         } catch (final Exception e) {
-            SquaremapMobs.getInstance().getLogger().log(Level.WARNING, "Failed to register signs icon", e);
+            SquaremapMobs.getInstance().getLogger().log(Level.WARNING, "Failed to register mobs icon", e);
         }
         return key;
     }
