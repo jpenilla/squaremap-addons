@@ -56,6 +56,7 @@ public final class MobsWorldConfig extends WorldConfig {
                 "allay",
                 "armadillo",
                 "axolotl",
+                "bat",
                 "bee",
                 "camel",
                 "cat",
