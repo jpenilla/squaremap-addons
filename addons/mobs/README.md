@@ -54,4 +54,4 @@ allay, armadillo, axolotl, bat, bee, camel, cat, chicken, cod, cow, dolphin, don
 
 ### hostile
 
-blaze, breeze, cave_spider, creeper, drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, ghast, giant, guardian, hoglin, husk, illusioner, magma_cube, phantom, piglin, piglin_brute, pillager, ravager, shulker, silverfish, skeleton, skeleton_horse, slime, spider, stray, vex, vindicator, warden, witch, wither, wither_skeleton, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager, zombified_piglin
+blaze, breeze, cave_spider, creaking, creeper, drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, ghast, giant, guardian, hoglin, husk, illusioner, magma_cube, phantom, piglin, piglin_brute, pillager, ravager, shulker, silverfish, skeleton, skeleton_horse, slime, spider, stray, vex, vindicator, warden, witch, wither, wither_skeleton, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager, zombified_piglin

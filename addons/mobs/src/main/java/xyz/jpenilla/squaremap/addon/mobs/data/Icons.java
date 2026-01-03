@@ -28,6 +28,7 @@ public final class Icons {
     public static final Key CHICKEN = register("chicken");
     public static final Key COD = register("cod");
     public static final Key COW = register("cow");
+    public static final Key CREAKING = register("creaking");
     public static final Key CREEPER = register("creeper");
     public static final Key DOLPHIN = register("dolphin");
     public static final Key DONKEY = register("donkey");
