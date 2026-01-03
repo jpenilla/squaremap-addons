@@ -1,14 +1,14 @@
-# mobs
+# Mobs
 
 Display live mobs on your map.
 
-## configuration
+## Configuration
 
-### global options
+### Global options
 
 * `update-interval` - How often (in seconds) to update mobs on the map (default: `5`)
 
-### per-world options
+### Per-world options
 
 * `enabled` - Enable or disable mobs for this world (default: `true`)
 * `layer.label` - Name of the layer shown in the UI (default: `"Mobs"`)
@@ -20,7 +20,7 @@ Display live mobs on your map.
 * `icon.tooltip` - Tooltip text when hovering over a mob. Use `{name}` for the mob name (default: `'{name}'`)
 * `allowed-mobs` - List of mob types to display. Use Minecraft entity type names (lowercase with underscores). Use `'*'` to show all supported mobs. By default, only passive and neutral mobs are displayed.
 
-### allowed-mobs examples
+### Allowed-mobs examples
 
 Show all mobs:
 
@@ -46,12 +46,12 @@ worlds:
       - zombie
 ```
 
-## supported mobs
+## Aupported mobs
 
-### passive/neutral
+### Passive/neutral
 
 allay, armadillo, axolotl, bat, bee, camel, cat, chicken, cod, cow, dolphin, donkey, fox, frog, glow_squid, goat, happy_ghast, horse, iron_golem, llama, mooshroom, mule, nautilus, ocelot, panda, parrot, pig, polar_bear, pufferfish, rabbit, salmon, sheep, sniffer, snow_golem, squid, strider, tadpole, trader_llama, tropical_fish, turtle, villager, wandering_trader, wolf
 
-### hostile
+### Hostile
 
 blaze, breeze, cave_spider, creaking, creeper, drowned, elder_guardian, ender_dragon, enderman, endermite, evoker, ghast, giant, guardian, hoglin, husk, illusioner, magma_cube, phantom, piglin, piglin_brute, pillager, ravager, shulker, silverfish, skeleton, skeleton_horse, slime, spider, stray, vex, vindicator, warden, witch, wither, wither_skeleton, zoglin, zombie, zombie_horse, zombie_nautilus, zombie_villager, zombified_piglin
