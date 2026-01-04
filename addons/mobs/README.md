@@ -46,11 +46,17 @@ worlds:
       - zombie
 ```
 
-## Aupported mobs
+## Supported mobs
 
 ### Passive/neutral
 
 allay, armadillo, axolotl, bat, bee, camel, camel_husk, cat, chicken, cod, cow, dolphin, donkey, fox, frog, glow_squid, goat, happy_ghast, horse, iron_golem, llama, mooshroom, mule, nautilus, ocelot, panda, parrot, pig, polar_bear, pufferfish, rabbit, salmon, sheep, sniffer, snow_golem, squid, strider, tadpole, trader_llama, tropical_fish, turtle, villager, wandering_trader, wolf
+
+#### Exceptions
+
+zombie_horse & zombie_nautilus are not added to the default passive/neutral mobs list, since they become passive/neutral once their hostile mob rider gets separated from them.
+
+---
 
 ### Hostile
 
