@@ -23,6 +23,7 @@ public final class Icons {
     public static final Key BLAZE = register("blaze");
     public static final Key BREEZE = register("breeze");
     public static final Key CAMEL = register("camel");
+    public static final Key CAMEL_HUSK = register("camel_husk");
     public static final Key CAT = register("cat");
     public static final Key CAVE_SPIDER = register("cave_spider");
     public static final Key CHICKEN = register("chicken");
@@ -59,6 +60,7 @@ public final class Icons {
     public static final Key NAUTILUS = register("nautilus");
     public static final Key OCELOT = register("ocelot");
     public static final Key PANDA = register("panda");
+    public static final Key PARCHED = register("parched");
     public static final Key PARROT = register("parrot");
     public static final Key PHANTOM = register("phantom");
     public static final Key PIG = register("pig");

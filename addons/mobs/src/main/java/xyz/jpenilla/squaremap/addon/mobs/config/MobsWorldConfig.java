@@ -59,6 +59,7 @@ public final class MobsWorldConfig extends WorldConfig {
                 "bat",
                 "bee",
                 "camel",
+                "camel_husk",
                 "cat",
                 "chicken",
                 "cod",
