@@ -47,14 +47,14 @@ public final class SquaremapTask extends BukkitRunnable {
             if (loc.getY() < this.worldConfig.minimumY) {
                 continue;
             }
-            if (this.worldConfig.surfaceOnly && aboveSurface(loc)) {
+            if (this.worldConfig.surfaceOnly && belowSurface(loc)) {
                 continue;
             }
             this.handleMob(type, mob.getEntityId(), loc);
         }
     }
 
-    private static boolean aboveSurface(final Location loc) {
+    private static boolean belowSurface(final Location loc) {
         return loc.getY() < loc.getWorld().getHighestBlockYAt(loc.getBlockX(), loc.getBlockZ(), HeightMap.WORLD_SURFACE);
     }
 
