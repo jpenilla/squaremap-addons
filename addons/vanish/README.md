@@ -5,6 +5,7 @@ squaremap integration for various vanish plugins.
 Directly supported vanish plugins:
 - SuperVanish
 - PremiumVanish
+- SayanVanish
 
 Any other plugin that sets the "vanished" metadata will also work.
 

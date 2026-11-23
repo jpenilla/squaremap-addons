@@ -24,6 +24,12 @@ public final class SquaremapVanish extends JavaPlugin implements Listener {
             this.vanishAdapter = new SuperVanish(this.squaremap);
         }
 
+        final boolean sayanVanish = this.getServer().getPluginManager().isPluginEnabled("SayanVanish") ||
+            this.getServer().getPluginManager().isPluginEnabled("SayanVanish");
+        if (sayanVanish) {
+            this.vanishAdapter = new SayanVanish(this.squaremap);
+        }
+
         if (this.vanishAdapter == null) {
             this.getLogger().info("You have installed squaremap-vanish without any explicitly supported vanish plugins (SuperVanish, PremiumVanish). Trying to get vanish status from 'vanished' player metadata value used by some vanish plugins.");
             this.vanishAdapter = new VanishFallback(this, squaremap);

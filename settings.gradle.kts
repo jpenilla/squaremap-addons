@@ -24,6 +24,18 @@ dependencyResolutionManagement {
                 includeGroupByRegex("com\\.github\\..*")
             }
         }
+        maven("https://repo.sayandev.org/releases/") {
+            mavenContent {
+                includeGroup("org.sayandev")
+                includeGroupByRegex("org\\.sayandev\\..*")
+            }
+        }
+        maven("https://repo.sayandev.org/snapshots/") {
+            mavenContent {
+                includeGroup("org.sayandev")
+                includeGroupByRegex("org\\.sayandev\\..*")
+            }
+        }
         modrinthMavenWorkaround(
             "claimchunk",
             "0.0.25-FIX3",
